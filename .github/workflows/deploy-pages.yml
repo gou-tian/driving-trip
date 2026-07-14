@@ -1,0 +1,88 @@
+# ============================================================
+# GitHub Pages 镜像部署 · 与 deploy.yml 并行,不替换主站
+# 监听 push main → build → 部署到 gh-pages(由 GitHub Actions 托管)
+# URL: https://gou-tian.github.io/driving-trip/
+# ============================================================
+# 触发条件:同 deploy.yml,push main 后两个 workflow 并行跑
+# 配额说明:Public repo 永久免费,private repo 100GB/月
+# 子路径处理:GH Pages 默认在 /<repo>/ 子路径,SITE_URL 覆盖
+# ============================================================
+name: Deploy Pages (mirror)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GH Pages 部署必须开这两个权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 不要和主 deploy.yml 冲突(那是 ssh 部署,这里 GH Pages)
+concurrency:
+  group: pages-mirror
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 构建 dist/(覆盖 SITE_URL 为 GH Pages URL)
+        env:
+          SITE_URL: https://gou-tian.github.io/driving-trip/
+        run: python3 -m scripts.build --clean
+
+      - name: 验证产物
+        run: |
+          test -f dist/index.html
+          test -f dist/sitemap.xml
+          test -f dist/robots.txt
+          test -f dist/manifest.webmanifest
+          test -f dist/css/theme.min.css
+          test -f dist/js/weather.js
+          echo "✓ dist/ 核心产物齐全"
+
+      - name: 配置 Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 报告
+        if: always()
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          STATUS: ${{ job.status }}
+        run: |
+          if [ "$STATUS" = "success" ]; then
+            echo "🟢 GH Pages 镜像部署成功!"
+            echo "   URL: $PAGE_URL"
+          else
+            echo "🔴 GH Pages 部署失败"
+            echo "   Settings → Pages 查看当前发布状态"
+          fi
+</content>
+</invoke>

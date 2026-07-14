@@ -32,7 +32,9 @@ SITE_NAME = "新疆自驾 20 天"
 SITE_DESC = (
     "2026 年 7-8 月 20 天新疆自驾攻略 · 含白哈巴 · 精简东疆版 · 实时天气 + 高德导航行程一键直达"
 )
-SITE_URL = "https://trip.gtian.cn/xinjiang"  # 部署根
+# 支持 SITE_URL 环境变量覆盖,默认部署到 gtian.cn(自托管 nginx)
+# GH Pages 部署时设为 https://<user>.github.io/<repo>/
+SITE_URL = os.environ.get("SITE_URL", "https://trip.gtian.cn/xinjiang")
 SITE_LOCALE = "zh_CN"
 SITE_LANG = "zh-CN"
 SITE_TIMEZONE_OFFSET = "+08:00"
