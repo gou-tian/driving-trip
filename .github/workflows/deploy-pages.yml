@@ -84,5 +84,3 @@ jobs:
             echo "🔴 GH Pages 部署失败"
             echo "   Settings → Pages 查看当前发布状态"
           fi
-</content>
-</invoke>
