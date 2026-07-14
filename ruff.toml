@@ -1,0 +1,22 @@
+line-length = 100
+target-version = "py310"
+
+[lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "UP",     # pyupgrade
+    "SIM",    # flake8-simplify
+    "RUF",    # ruff-specific
+]
+ignore = [
+    "E501",   # line-too-long(模板字符串天然长)
+    "B008",   # function-call-argument-default(模板中常用)
+]
+
+[lint.per-file-ignores]
+"scripts/build.py" = ["B008"]
+"tests/*" = ["S101"]  # 允许 assert

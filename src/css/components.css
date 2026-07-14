@@ -1,0 +1,651 @@
+/* ============================================================
+ * 通用组件 · .btn .card .alert .tag .skip-link
+ * + 业务组件 · .topbar .hero .day-card .day-header .module 等
+ * ============================================================ */
+
+/* ============= Skip link · a11y 关键 ============= */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: var(--s-3);
+  background: var(--brand-500);
+  color: white;
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-sm);
+  font-weight: var(--fw-medium);
+  z-index: var(--z-modal);
+  transition: top var(--t-fast) var(--ease);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: var(--s-3);
+  color: white;
+  text-decoration: none;
+}
+
+/* ============= 按钮 ============= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-4);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--t-fast) var(--ease);
+  white-space: nowrap;
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.btn:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: var(--sh-2);
+}
+
+.btn-primary {
+  background: var(--brand-500);
+  color: white;
+  border-color: var(--brand-500);
+}
+
+.btn-primary:hover {
+  background: var(--brand-700);
+  border-color: var(--brand-700);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--card-bg-2);
+  color: var(--brand-500);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-deep);
+  color: var(--brand-700);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-deep);
+  color: var(--text);
+}
+
+.btn-icon {
+  padding: var(--s-2);
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+}
+
+.btn-sm {
+  font-size: var(--fs-xs);
+  padding: 4px var(--s-3);
+}
+
+/* ============= 卡片 ============= */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--s-5);
+  box-shadow: var(--sh-1);
+  transition: box-shadow var(--t-base) var(--ease), transform var(--t-base) var(--ease);
+}
+
+.card-interactive {
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+}
+
+.card-interactive:hover {
+  text-decoration: none;
+  box-shadow: var(--sh-2);
+  transform: translateY(-2px);
+  border-color: var(--brand-500);
+}
+
+/* 左侧 4px 强调条 · 5 模块色 */
+.card-accent {
+  border-inline-start: 4px solid var(--accent-color, var(--brand-500));
+}
+
+.card-accent.route    { --accent-color: var(--m-route); }
+.card-accent.weather  { --accent-color: var(--m-weather); }
+.card-accent.clothes  { --accent-color: var(--m-clothes); }
+.card-accent.play     { --accent-color: var(--m-play); }
+.card-accent.warn     { --accent-color: var(--m-warn); }
+
+/* ============= Alert ============= */
+.alert {
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  border-inline-start: 4px solid var(--brand-500);
+  background: var(--bg-deep);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  margin-block: var(--s-3);
+}
+
+.alert-info    { border-color: var(--info-500);    background: color-mix(in srgb, var(--info-500) 8%, var(--card-bg)); }
+.alert-success { border-color: var(--success-500); background: color-mix(in srgb, var(--success-500) 8%, var(--card-bg)); }
+.alert-warning { border-color: var(--warning-500); background: color-mix(in srgb, var(--warning-500) 8%, var(--card-bg)); }
+.alert-danger,
+.alert-critical { border-color: var(--danger-500); background: color-mix(in srgb, var(--danger-500) 8%, var(--card-bg)); }
+
+/* ============= Tag / Badge ============= */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: 2px var(--s-2);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  border-radius: var(--r-pill);
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.tag.route    { background: color-mix(in srgb, var(--m-route) 15%, transparent);    color: var(--m-route); border-color: transparent; }
+.tag.weather  { background: color-mix(in srgb, var(--m-weather) 15%, transparent);  color: var(--m-weather); border-color: transparent; }
+.tag.clothes  { background: color-mix(in srgb, var(--m-clothes) 15%, transparent);  color: var(--m-clothes); border-color: transparent; }
+.tag.play     { background: color-mix(in srgb, var(--m-play) 15%, transparent);     color: var(--m-play); border-color: transparent; }
+.tag.warn     { background: color-mix(in srgb, var(--m-warn) 15%, transparent);     color: var(--m-warn); border-color: transparent; }
+
+/* ============= 顶栏 ============= */
+.topbar {
+  background: var(--grad-primary);
+  color: white;
+  padding: var(--s-3) 0;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  box-shadow: var(--sh-2);
+}
+
+.topbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.topbar .brand {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  color: white;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.topbar .brand:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.topbar .nav-links {
+  display: flex;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.topbar .nav-links a {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--fs-sm);
+  transition: color var(--t-fast) var(--ease);
+}
+
+.topbar .nav-links a:hover,
+.topbar .nav-links a.active {
+  color: white;
+  text-decoration: none;
+}
+
+.topbar .nav-links a.active {
+  font-weight: var(--fw-semibold);
+}
+
+/* 暗色切换按钮 */
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+  color: white;
+  font-size: 14px;
+  transition: background var(--t-fast) var(--ease);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ============= Hero(渐变大标题) ============= */
+.hero {
+  background: var(--grad-hero);
+  color: white;
+  padding: var(--s-9) 0 var(--s-8);
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  margin-bottom: var(--s-3);
+  letter-spacing: 1px;
+  color: white;
+}
+
+.hero .subtitle {
+  font-size: var(--fs-md);
+  opacity: 0.95;
+  margin-bottom: var(--s-5);
+}
+
+.hero .meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-5);
+  font-size: var(--fs-sm);
+}
+
+.hero .meta-item strong {
+  color: #ffd966;
+  margin-right: var(--s-1);
+}
+
+/* ============= 速查表 ============= */
+.weather-table {
+  background: var(--card-bg);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-1);
+  font-size: var(--fs-sm);
+  border: 1px solid var(--border);
+}
+
+.weather-table thead {
+  background: var(--brand-500);
+  color: white;
+}
+
+.weather-table th,
+.weather-table td {
+  padding: var(--s-3) var(--s-2);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.weather-table tbody tr:hover {
+  background: color-mix(in srgb, var(--brand-500) 5%, transparent);
+}
+
+.weather-table .star {
+  color: var(--accent-500);
+  font-weight: var(--fw-bold);
+}
+
+.weather-table a {
+  color: var(--brand-500);
+  font-weight: var(--fw-semibold);
+}
+
+/* ============= 日卡(首页) ============= */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+
+.day-card {
+  background: var(--card-bg);
+  border-radius: var(--r-lg);
+  padding: var(--s-4) var(--s-3);
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--sh-1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--t-base) var(--ease);
+  display: block;
+}
+
+.day-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sh-2);
+  border-color: var(--brand-500);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.day-card .day-num {
+  font-size: 26px;
+  font-weight: var(--fw-bold);
+  color: var(--brand-500);
+  line-height: 1;
+}
+
+.day-card .day-date {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  margin-top: var(--s-1);
+}
+
+.day-card .day-route {
+  font-size: var(--fs-sm);
+  margin-top: var(--s-2);
+  color: var(--text);
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+}
+
+.day-card .day-temp {
+  font-size: var(--fs-xs);
+  color: var(--accent-500);
+  margin-top: var(--s-2);
+  font-weight: var(--fw-semibold);
+}
+
+.day-card .badge {
+  position: absolute;
+  top: var(--s-2);
+  right: var(--s-2);
+  background: var(--accent-500);
+  color: white;
+  font-size: 10px;
+  padding: 2px var(--s-2);
+  border-radius: var(--r-pill);
+  font-weight: var(--fw-semibold);
+}
+
+.day-card .badge.cold { background: var(--info-500); }
+.day-card .badge.hot { background: var(--danger-500); }
+
+/* ============= 信息卡(首页其他) ============= */
+.info-card {
+  background: var(--card-bg);
+  border-radius: var(--r-lg);
+  padding: var(--s-5);
+  box-shadow: var(--sh-1);
+  border: 1px solid var(--border);
+  margin-bottom: var(--s-4);
+}
+
+.info-card h3 {
+  color: var(--brand-500);
+  margin-bottom: var(--s-3);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+.info-card ul {
+  padding-left: var(--s-5);
+}
+
+.info-card li {
+  margin: var(--s-2) 0;
+  line-height: 1.6;
+}
+
+/* ============= Section 标题 ============= */
+.section h2 {
+  font-size: var(--fs-xl);
+  color: var(--brand-500);
+  margin-bottom: var(--s-5);
+  border-inline-start: 4px solid var(--brand-500);
+  padding-inline-start: var(--s-3);
+  font-weight: var(--fw-semibold);
+}
+
+/* ============= 每日详情页头 ============= */
+.day-header {
+  background: var(--grad-primary);
+  color: white;
+  padding: var(--s-7) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.day-header.cold { background: var(--grad-cold); }
+.day-header.hot { background: var(--grad-hot); }
+.day-header.star { background: var(--grad-star); }
+
+.day-header .container {
+  position: relative;
+  z-index: 2;
+}
+
+.day-header .day-tag {
+  font-size: var(--fs-sm);
+  opacity: 0.9;
+  margin-bottom: var(--s-2);
+}
+
+.day-header h1 {
+  font-size: var(--fs-2xl);
+  color: white;
+  margin-bottom: var(--s-3);
+  letter-spacing: 0.5px;
+}
+
+.day-header .route-summary {
+  font-size: var(--fs-md);
+  opacity: 0.95;
+}
+
+.day-header .badges {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.day-header .badges .badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  backdrop-filter: blur(4px);
+}
+
+/* ============= Module · 5 大模块 ============= */
+.modules {
+  padding: var(--s-6) 0;
+}
+
+.module {
+  background: var(--card-bg);
+  border-radius: var(--r-lg);
+  padding: var(--s-5);
+  box-shadow: var(--sh-1);
+  margin-bottom: var(--s-4);
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--brand-500);
+  transition: box-shadow var(--t-base) var(--ease);
+}
+
+.module:hover {
+  box-shadow: var(--sh-2);
+}
+
+.module.route   { border-inline-start-color: var(--m-route); }
+.module.weather { border-inline-start-color: var(--m-weather); }
+.module.clothes { border-inline-start-color: var(--m-clothes); }
+.module.play    { border-inline-start-color: var(--m-play); }
+.module.warn    { border-inline-start-color: var(--m-warn); }
+
+.module h2 {
+  font-size: var(--fs-md);
+  color: var(--brand-500);
+  margin-bottom: var(--s-3);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: var(--fw-semibold);
+}
+
+.module.route h2   { color: var(--m-route); }
+.module.weather h2 { color: var(--m-weather); }
+.module.clothes h2 { color: var(--m-clothes); }
+.module.play h2    { color: var(--m-play); }
+.module.warn h2    { color: var(--m-warn); }
+
+.module .module-body {
+  font-size: var(--fs-base);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.module .module-body ul {
+  padding-left: var(--s-5);
+  margin: var(--s-2) 0;
+}
+
+.module .module-body li {
+  margin: var(--s-1) 0;
+}
+
+.module .module-body strong {
+  color: var(--accent-500);
+  font-weight: var(--fw-semibold);
+}
+
+.module .module-body p {
+  margin: var(--s-2) 0;
+}
+
+.module .critical,
+.module .module-body .critical {
+  color: var(--m-warn);
+  font-weight: var(--fw-semibold);
+}
+
+/* ============= 日期前后导航 ============= */
+.day-nav {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--s-6) 0;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.day-nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--s-3) var(--s-5);
+  background: var(--brand-500);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  transition: background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  flex: 1;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.day-nav a:hover {
+  background: var(--brand-700);
+  color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.day-nav a.prev { background: var(--text-muted); }
+.day-nav a.prev:hover { background: var(--text-subtle); }
+.day-nav a.home { background: var(--accent-500); }
+.day-nav a.home:hover { background: var(--accent-500); filter: brightness(0.9); }
+
+/* ============= 页脚 ============= */
+.footer {
+  background: var(--brand-700);
+  color: rgba(255, 255, 255, 0.9);
+  padding: var(--s-5) 0;
+  text-align: center;
+  font-size: var(--fs-sm);
+  margin-top: var(--s-7);
+}
+
+.footer a {
+  color: #ffd966;
+  text-decoration: none;
+  font-weight: var(--fw-medium);
+}
+
+.footer a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.footer p {
+  margin: var(--s-1) 0;
+}
+
+/* ============= 响应式 ============= */
+@media (max-width: 768px) {
+  :root {
+    --container-pad: var(--s-4);
+  }
+
+  .hero {
+    padding: var(--s-8) 0 var(--s-7);
+  }
+
+  .hero h1 {
+    font-size: var(--fs-xl);
+  }
+
+  .hero .subtitle {
+    font-size: var(--fs-base);
+  }
+
+  .day-header h1 {
+    font-size: var(--fs-xl);
+  }
+
+  .day-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-3);
+  }
+
+  .day-nav {
+    flex-direction: column;
+  }
+
+  .topbar .nav-links {
+    gap: var(--s-3);
+  }
+
+  .topbar .nav-links a {
+    font-size: var(--fs-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .day-grid {
+    grid-template-columns: 1fr;
+  }
+}

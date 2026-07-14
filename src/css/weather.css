@@ -1,0 +1,223 @@
+/* ============================================================
+ * 天气块 · 与 weather.js 配套,类名冻结为 JS 契约
+ *
+ * ⚠ 修改这些类名前请务必检查 ../js/weather.js
+ *   5 个冻结类名:.temp .desc .uv .wind .precip + .live-tag
+ *   属性契约:data-lat / data-lon / data-date / data-weather-status
+ * ============================================================ */
+
+.weather-block {
+  font-size: var(--fs-base);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.weather-block .temp {
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.weather-block .desc {
+  color: var(--text-muted);
+}
+
+.weather-block .uv {
+  font-weight: var(--fw-medium);
+}
+
+.weather-block .uv strong {
+  color: inherit;
+}
+
+.weather-block .wind {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.weather-block .precip {
+  color: var(--info-500);
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-sm);
+}
+
+.weather-block .live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  background: color-mix(in srgb, var(--success-500) 12%, transparent);
+  color: var(--success-500);
+  padding: 2px var(--s-2);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.3px;
+  border: 1px solid color-mix(in srgb, var(--success-500) 25%, transparent);
+}
+
+/* 数据加载中状态 */
+.weather-block[data-weather-status="loading"] {
+  opacity: 0.6;
+}
+
+/* 实时数据状态:加个左边框提示 */
+.weather-block[data-weather-status="live"] {
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--success-500);
+}
+
+/* 静态 fallback 状态:无标识 */
+.weather-block[data-weather-status="static"] {
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--border);
+}
+
+/* 超出 today+15 预报窗口:红字 + 红边框 */
+.weather-block[data-weather-status="out-of-range"] {
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid var(--danger-500);
+  color: var(--danger-500);
+  font-size: var(--fs-sm);
+}
+.weather-block[data-weather-status="out-of-range"] .note {
+  font-weight: var(--fw-medium);
+}
+
+/* + 提示文字 */
+.weather-block + p,
+.weather-block + small {
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+  margin-top: var(--s-2);
+}
+
+/* ============================================================
+ * 🆕 刷新按钮 + meta 时间戳
+ * ============================================================ */
+.weather-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 2px 8px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+  font-family: inherit;
+  color: inherit;
+}
+.weather-refresh:hover {
+  background: color-mix(in srgb, var(--brand-500) 10%, transparent);
+  border-color: var(--brand-500);
+}
+.weather-refresh:active {
+  transform: scale(0.92);
+}
+.weather-refresh:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+.weather-block[data-weather-status="loading"] .weather-refresh,
+.weather-block[data-weather-status="loading"] .weather-meta .weather-refresh {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.weather-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-inline-start: var(--s-2);
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+}
+.weather-timestamp {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ============================================================
+ * 紧凑表格适配(首页速查表 20 行)
+ *
+ * 关键约束:
+ *  - 列宽显式控制(避免被 inline weather-block 内容挤爆)
+ *  - 温区列 max-width 强制内部 wrap
+ *  - weather-meta 用 flex-basis:100% 换到第二行
+ *  - 路段列拿到足够宽度,不再竖排换行
+ * ============================================================ */
+.weather-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.weather-table th,
+.weather-table td {
+  vertical-align: top;
+}
+/* 列宽定义:列序号 1=日 2=日期 3=路段 4=温区 5=⭐
+ * 用 table-layout: fixed 时,这些 width 严格生效 */
+.weather-table th:nth-child(1),
+.weather-table td:nth-child(1) {
+  width: 56px;
+}
+.weather-table th:nth-child(2),
+.weather-table td:nth-child(2) {
+  width: 110px;
+  white-space: nowrap;
+}
+.weather-table th:nth-child(3),
+.weather-table td:nth-child(3) {
+  /* 路段列:吃剩余空间 */
+  width: auto;
+  word-break: break-word;
+}
+.weather-table th:nth-child(4),
+.weather-table td:nth-child(4) {
+  /* 温区列:固定 340px,触发 weather-block wrap */
+  width: 340px;
+  max-width: 340px;
+}
+.weather-table th:nth-child(5),
+.weather-table td:nth-child(5) {
+  width: 60px;
+  text-align: center;
+}
+/* weather-block 在表格里重置边框/内边距,改用换行分行显示 */
+.weather-table .weather-block {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  border: 0;
+  padding: 0;
+}
+.weather-table .weather-meta {
+  flex-basis: 100%;
+  margin-top: 4px;
+  margin-inline-start: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-subtle);
+}
+@media (max-width: 768px) {
+  .weather-table .weather-timestamp {
+    display: none;
+  }
+  .weather-table .weather-meta {
+    justify-content: flex-end;
+  }
+  .weather-table th:nth-child(3),
+  .weather-table td:nth-child(3) {
+    min-width: 140px;
+  }
+  .weather-table th:nth-child(4),
+  .weather-table td:nth-child(4) {
+    min-width: 180px;
+    max-width: 220px;
+  }
+  .weather-table th:nth-child(2),
+  .weather-table td:nth-child(2) {
+    width: 80px;
+  }
+}

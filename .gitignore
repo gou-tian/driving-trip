@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# 构建/测试产物
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# 部署产物(由 build.py 生成)
+dist/
+
+# 备份目录(本地参考,不入版本控制)
+_old_build/
+_old_html/
+
+# 顶层旧版产物(已被 src/scripts 取代,本地保留作 fallback 不入版本控制)
+/_build_amap_site.py
+/_build_site.py
+/_weather_data.py
+/index.html
+/day/
+/amap/
+/css/

@@ -1,0 +1,16 @@
+[project]
+name = "xinjiang-trip-website"
+version = "2.0.0"
+description = "新疆自驾 20 天静态网站 · 含白哈巴版 · 实时天气 + 高德导航指南"
+requires-python = ">=3.10"
+dependencies = []  # 纯标准库,无外部依赖
+
+[project.scripts]
+build = "scripts.build:main"
+lint = "scripts.lint:main"  # 可选
+
+[tool.uv]  # 如使用 uv 安装/运行
+dev-dependencies = [
+    "ruff>=0.5.0",
+    "pytest>=8.0.0",
+]

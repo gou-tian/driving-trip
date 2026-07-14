@@ -1,0 +1,108 @@
+/* ============================================================
+ * 布局工具
+ * .container / .stack / .cluster / .grid
+ * ============================================================ */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.container.narrow {
+  --container-max: 720px;
+}
+
+.container.wide {
+  --container-max: 1200px;
+}
+
+/* ============= Stack:垂直堆叠,自动间距 ============= */
+.stack > * + * {
+  margin-top: var(--s-4);
+}
+
+.stack.tight > * + * {
+  margin-top: var(--s-2);
+}
+
+.stack.relaxed > * + * {
+  margin-top: var(--s-6);
+}
+
+/* ============= Cluster:水平排列,自动间距 ============= */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-items: center;
+}
+
+/* ============= Grid:响应式卡片 ============= */
+.grid {
+  display: grid;
+  gap: var(--s-4);
+}
+
+.grid.cols-2 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.grid.cols-4 { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.grid.cols-5 { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+
+/* ============= Section:大块分区 ============= */
+.section {
+  padding-block: var(--s-7);
+}
+
+.section.tight {
+  padding-block: var(--s-5);
+}
+
+.section.bg-alt {
+  background: var(--bg-deep);
+}
+
+/* ============= 文字工具 ============= */
+.text-xs { font-size: var(--fs-xs); }
+.text-sm { font-size: var(--fs-sm); }
+.text-md { font-size: var(--fs-md); }
+.text-lg { font-size: var(--fs-lg); }
+.text-xl { font-size: var(--fs-xl); }
+
+.text-muted { color: var(--text-muted); }
+.text-subtle { color: var(--text-subtle); }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.fw-medium { font-weight: var(--fw-medium); }
+.fw-semibold { font-weight: var(--fw-semibold); }
+.fw-bold { font-weight: var(--fw-bold); }
+
+/* ============= 隐藏工具 ============= */
+.hidden { display: none !important; }
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ============= 响应式显示控制 ============= */
+@media (max-width: 480px) {
+  .hide-sm { display: none; }
+}
+
+@media (min-width: 769px) {
+  .hide-md-up { display: none; }
+}
+
+@media (max-width: 768px) {
+  .hide-md-down { display: none; }
+}

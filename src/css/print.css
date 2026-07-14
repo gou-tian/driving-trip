@@ -1,0 +1,80 @@
+/* ============================================================
+ * 打印样式 · @media print
+ * ============================================================ */
+
+@media print {
+  /* 隐藏交互元素 */
+  .topbar,
+  .day-nav,
+  .footer,
+  .theme-toggle,
+  .skip-link,
+  button {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0 1cm;
+  }
+
+  /* 卡片去掉阴影,加边框便于阅读 */
+  .module,
+  .card,
+  .info-card,
+  .weather-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    margin-bottom: 0.5cm;
+  }
+
+  /* 保留彩色渐变 */
+  .day-header,
+  .hero {
+    background: #1c5fa3 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 0.5cm 0;
+  }
+
+  .day-header.hot {
+    background: #c97a1f !important;
+  }
+
+  .day-header.cold {
+    background: #2c7a4a !important;
+  }
+
+  .day-header.star {
+    background: #c97a1f !important;
+  }
+
+  /* 链接 URL 紧跟其后 */
+  a[href^="http"]:not([href*="gtian.cn"])::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+    word-break: break-all;
+  }
+
+  /* 标题清晰 */
+  h1, h2, h3 {
+    color: #000 !important;
+    page-break-after: avoid;
+  }
+
+  /* 表格保留 */
+  .weather-table {
+    box-shadow: none !important;
+    border: 1px solid #ccc;
+  }
+}

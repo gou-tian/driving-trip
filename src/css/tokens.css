@@ -1,0 +1,192 @@
+/* ============================================================
+ * 设计系统 · Tokens(单一真相源)
+ * 所有视觉决策都通过 CSS 变量引用这里
+ * 改一处 → 全站联动
+ * ============================================================ */
+
+:root {
+  /* ============= 品牌色 · 冷调中性 ============= */
+  --brand-500: #2563a8;
+  --brand-600: #1c4f8a;
+  --brand-700: #143f6e;
+  --brand-on-light: #143f6e;
+  --brand-on-dark: #82c0f0;
+
+  /* ============= 强调色 ============= */
+  --accent-500: #d97706; /* 暖强调 + weather */
+  --accent-300: #f59e0b; /* 暗色模式用 */
+
+  /* ============= 5 模块语义色 ============= */
+  --m-route: #0369a1;
+  --m-weather: #d97706;
+  --m-clothes: #7c3aed;
+  --m-play: #0f766e;
+  --m-warn: #b91c1c;
+
+  --m-route-dark: #38bdf8;
+  --m-weather-dark: #f59e0b;
+  --m-clothes-dark: #a78bfa;
+  --m-play-dark: #2dd4bf;
+  --m-warn-dark: #f87171;
+
+  /* ============= 状态色 ============= */
+  --success-500: #0f766e;
+  --info-500: #0369a1;
+  --danger-500: #b91c1c;
+  --warning-500: #d97706;
+  --violet-500: #7c3aed;
+
+  /* ============= 冷调中性(远离纯灰) ============= */
+  --bg: #f4f6fa;
+  --bg-deep: #e9eef5; /* 分区背景 */
+  --bg-overlay: rgba(15, 27, 45, 0.85);
+
+  --card-bg: #ffffff;
+  --card-bg-2: #fbfcfe;
+
+  --text: #0f1b2d;
+  --text-muted: #5b6b80;
+  --text-subtle: #8895a8;
+
+  --border: #dfe6f0;
+  --border-strong: #c1cbd9;
+
+  --focus-ring: #2563a8;
+  --focus-ring-dark: #82c0f0;
+
+  /* ============= 渐变 ============= */
+  --grad-hero: linear-gradient(135deg, #1c5fa3 0%, #2c7a4a 50%, #d97706 100%);
+  --grad-primary: linear-gradient(135deg, var(--brand-700) 0%, var(--brand-500) 100%);
+  --grad-amap: linear-gradient(135deg, #2c7a4a 0%, var(--brand-500) 100%);
+  --grad-cold: linear-gradient(135deg, #2980b9 0%, #2c3e50 100%);
+  --grad-hot: linear-gradient(135deg, #e67e22 0%, #b91c1c 100%);
+  --grad-star: linear-gradient(135deg, #c97a1f 0%, var(--violet-500) 100%);
+
+  /* ============= 间距 tokens ============= */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* ============= 字号 · 1.25 minor-third ============= */
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-base: 16px;
+  --fs-md: 18px;
+  --fs-lg: 22px;
+  --fs-xl: 28px;
+  --fs-2xl: 36px;
+
+  /* ============= 字重 ============= */
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ============= 圆角 ============= */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* ============= 阴影(浅色模式) ============= */
+  --sh-1: 0 1px 2px rgb(15 27 45 / .06), 0 1px 3px rgb(15 27 45 / .08);
+  --sh-2: 0 4px 12px rgb(15 27 45 / .08);
+  --sh-3: 0 12px 32px rgb(15 27 45 / .12);
+  --sh-4: 0 24px 48px rgb(15 27 45 / .16);
+
+  /* ============= 响应式断点(JS 用,媒体查询 CSS 直接写数值) ============= */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --container-max: 960px;
+  --container-pad: var(--s-5);
+
+  /* ============= Z-index ============= */
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* ============= 字体 ============= */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans CN", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, "Cascadia Code", monospace;
+
+  /* ============= 动效 ============= */
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --t-fast: 120ms;
+  --t-base: 200ms;
+  --t-slow: 400ms;
+}
+
+/* ============= 暗色模式:手动切换 ============= */
+:root[data-theme="dark"] {
+  --bg: #0b1220;
+  --bg-deep: #070d18;
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+
+  --card-bg: #131c2e;
+  --card-bg-2: #182438;
+
+  --text: #e5ecf5;
+  --text-muted: #95a3b8;
+  --text-subtle: #6b7a90;
+
+  --border: #243049;
+  --border-strong: #34425c;
+
+  --focus-ring: var(--focus-ring-dark);
+
+  --sh-1: 0 1px 2px rgb(0 0 0 / .4);
+  --sh-2: 0 4px 12px rgb(0 0 0 / .4);
+  --sh-3: 0 12px 32px rgb(0 0 0 / .5);
+  --sh-4: 0 24px 48px rgb(0 0 0 / .6);
+
+  /* 暗色模式下模块色提亮一档,保对比度 */
+  --m-route: var(--m-route-dark);
+  --m-weather: var(--m-weather-dark);
+  --m-clothes: var(--m-clothes-dark);
+  --m-play: var(--m-play-dark);
+  --m-warn: var(--m-warn-dark);
+}
+
+/* ============= 系统偏好:用户未手动切换时跟随 ============= */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0b1220;
+    --bg-deep: #070d18;
+    --card-bg: #131c2e;
+    --card-bg-2: #182438;
+    --text: #e5ecf5;
+    --text-muted: #95a3b8;
+    --text-subtle: #6b7a90;
+    --border: #243049;
+    --border-strong: #34425c;
+    --focus-ring: var(--focus-ring-dark);
+    --sh-1: 0 1px 2px rgb(0 0 0 / .4);
+    --sh-2: 0 4px 12px rgb(0 0 0 / .4);
+    --sh-3: 0 12px 32px rgb(0 0 0 / .5);
+    --m-route: var(--m-route-dark);
+    --m-weather: var(--m-weather-dark);
+    --m-clothes: var(--m-clothes-dark);
+    --m-play: var(--m-play-dark);
+    --m-warn: var(--m-warn-dark);
+  }
+}
+
+/* ============= 用户减少动效偏好 ============= */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 0ms;
+    --t-base: 0ms;
+    --t-slow: 0ms;
+  }
+}

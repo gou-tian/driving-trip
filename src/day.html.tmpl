@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="{{ site_lang }}">
+<head>{% include "head.html" %}</head>
+<body>
+{% include "skip-link.html" %}
+{% include "header-day.html" %}
+
+<header class="day-header {{ day.route_class }}">
+  <div class="container">
+    <div class="day-tag">D{{ day.num }} · {{ day.date_full }}</div>
+    <h1>{{ day.title }}</h1>
+    <div class="route-summary">📍 {{ day.route }}</div>
+    <div class="badges">
+      {{ badges_html | safe }}
+    </div>
+  </div>
+</header>
+
+<main id="main" role="main" class="modules container">
+
+  <section class="module route">
+    <h2><span class="icon">📍</span> 路程</h2>
+    <div class="module-body">
+      <p>{{ day.route_detail }}</p>
+    </div>
+  </section>
+
+  <section class="module weather">
+    <h2><span class="icon">🌡️</span> 天气</h2>
+    <div class="module-body">
+      {{ weather_block | safe }}
+    </div>
+  </section>
+
+  <section class="module clothes">
+    <h2><span class="icon">👔</span> 穿着</h2>
+    <div class="module-body">
+      <p>{{ day.clothes }}</p>
+    </div>
+  </section>
+
+  <section class="module play">
+    <h2><span class="icon">🎯</span> 游玩 · 美食 · 住宿</h2>
+    <div class="module-body">
+      <ul>
+        {{ play_html | safe }}
+      </ul>
+    </div>
+  </section>
+
+  <section class="module warn">
+    <h2><span class="icon">⚠️</span> 注意事项</h2>
+    <div class="module-body">
+      <ul>
+        {{ warn_html | safe }}
+      </ul>
+    </div>
+  </section>
+
+  <nav class="day-nav" aria-label="日期翻页">
+    {{ nav_html | safe }}
+  </nav>
+
+  <div class="card text-center" style="background:var(--bg-deep);">
+    🧭 <strong>导航还没设置?</strong>
+    <a href="{{ depth_prefix }}amap/index.html" class="btn btn-primary" style="margin-left:var(--s-3);">
+      前往高德导航设置指南 →
+    </a>
+  </div>
+
+</main>
+
+{% include "footer.html" %}
+</body>
+</html>

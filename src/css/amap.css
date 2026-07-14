@@ -1,0 +1,231 @@
+/* ============================================================
+ * 高德子目录专属样式 · /amap/
+ * 继承 components.css,只增量
+ * ============================================================ */
+
+.amap-header {
+  background: var(--grad-amap);
+  color: white;
+  padding: var(--s-7) 0;
+}
+
+.amap-header h1 {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--s-2);
+  color: white;
+}
+
+.amap-header .subtitle {
+  font-size: var(--fs-sm);
+  opacity: 0.95;
+}
+
+/* ============= POI / 路线链接卡片 ============= */
+.link-card {
+  background: var(--card-bg);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  margin-bottom: var(--s-3);
+  box-shadow: var(--sh-1);
+  border-inline-start: 4px solid var(--m-play);
+  border: 1px solid var(--border);
+  border-inline-start-width: 4px;
+  transition: box-shadow var(--t-fast) var(--ease);
+}
+
+.link-card:hover {
+  box-shadow: var(--sh-2);
+}
+
+.link-card.warning {
+  border-inline-start-color: var(--accent-500);
+  background: color-mix(in srgb, var(--accent-500) 6%, var(--card-bg));
+}
+
+.link-card .poi-name {
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-base);
+  margin-bottom: var(--s-2);
+  color: var(--text);
+}
+
+.link-card .poi-url {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-deep);
+  padding: var(--s-2);
+  border-radius: var(--r-sm);
+  word-break: break-all;
+  margin: var(--s-1) 0;
+  line-height: 1.5;
+}
+
+.link-card .open-btn {
+  display: inline-block;
+  padding: var(--s-2) var(--s-4);
+  background: var(--success-500);
+  color: white;
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  font-weight: var(--fw-medium);
+  margin-top: var(--s-1);
+  transition: background var(--t-fast) var(--ease);
+}
+
+.link-card .open-btn:hover {
+  background: var(--m-play-dark);
+  color: white;
+  text-decoration: none;
+}
+
+/* ============= 路线 row ============= */
+.route-row {
+  display: flex;
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-3) var(--s-4);
+  background: var(--card-bg);
+  border-radius: var(--r-md);
+  margin-bottom: var(--s-2);
+  border-inline-start: 3px solid var(--m-play);
+  box-shadow: var(--sh-1);
+  transition: transform var(--t-fast) var(--ease);
+}
+
+.route-row:hover {
+  transform: translateX(2px);
+  box-shadow: var(--sh-2);
+}
+
+.route-row .day-tag {
+  font-weight: var(--fw-bold);
+  color: var(--success-500);
+  font-size: var(--fs-sm);
+  min-width: 38px;
+  font-family: var(--font-mono);
+}
+
+.route-row .desc {
+  flex: 1;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.route-row .desc small {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  margin-top: 2px;
+}
+
+.route-row .open-btn {
+  padding: var(--s-1) var(--s-3);
+  background: var(--success-500);
+  color: white;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: var(--fw-medium);
+}
+
+.route-row .open-btn:hover {
+  background: var(--m-play-dark);
+  color: white;
+}
+
+/* ============= 信息块(章节内容容器) ============= */
+.info-block {
+  background: var(--card-bg);
+  border-radius: var(--r-lg);
+  padding: var(--s-5);
+  margin-bottom: var(--s-4);
+  box-shadow: var(--sh-1);
+  border: 1px solid var(--border);
+}
+
+.info-block h2 {
+  color: var(--brand-500);
+  font-size: var(--fs-md);
+  margin-bottom: var(--s-3);
+  padding-bottom: var(--s-2);
+  border-bottom: 2px solid var(--border);
+  border-inline-start: 0;
+  padding-inline-start: 0;
+}
+
+.info-block h3 {
+  color: var(--brand-500);
+  font-size: var(--fs-base);
+  margin-top: var(--s-4);
+  margin-bottom: var(--s-2);
+  font-weight: var(--fw-semibold);
+}
+
+.info-block code {
+  background: var(--bg-deep);
+  padding: 1px 6px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--accent-500);
+}
+
+.info-block ul, .info-block ol {
+  padding-left: var(--s-5);
+  line-height: 1.7;
+}
+
+.info-block li {
+  margin: var(--s-1) 0;
+}
+
+/* ============= 章节导航 ============= */
+.chapter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin: var(--s-6) 0;
+}
+
+.chapter-nav a {
+  flex: 1;
+  min-width: 120px;
+  padding: var(--s-3) var(--s-4);
+  background: var(--brand-500);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-align: center;
+  transition: all var(--t-fast) var(--ease);
+}
+
+.chapter-nav a:hover {
+  background: var(--brand-700);
+  color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.chapter-nav a.prev { background: var(--text-muted); }
+.chapter-nav a.home { background: var(--accent-500); }
+
+/* ============= 响应式 ============= */
+@media (max-width: 480px) {
+  .link-card {
+    flex-direction: column;
+  }
+
+  .route-row {
+    flex-wrap: wrap;
+  }
+
+  .route-row .desc {
+    flex: 1 0 100%;
+    margin-bottom: var(--s-2);
+  }
+}

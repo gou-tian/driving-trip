@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="{{ site_lang }}">
+<head>{% include "head.html" %}</head>
+<body>
+{% include "skip-link.html" %}
+{% include "header-home.html" %}
+
+<section class="hero">
+  <div class="container">
+    <h1>{{ logo_emoji }} {{ site_name }}</h1>
+    <p class="subtitle">含白哈巴(不住) · 精简东疆版 · 行程 + 天气 + 穿着</p>
+    <div class="meta">
+      <div class="meta-item"><strong>出发</strong> 2026/07/25</div>
+      <div class="meta-item"><strong>返程</strong> 2026/08/12</div>
+      <div class="meta-item"><strong>抵达</strong> 2026/08/13</div>
+      <div class="meta-item"><strong>里程</strong> ~8,400 km</div>
+      <div class="meta-item"><strong>预算</strong> ~¥4,773/人</div>
+      <div class="meta-item"><strong>人数</strong> 6 人(2 大 2 老 2 小)</div>
+    </div>
+  </div>
+</section>
+
+<main id="main" role="main">
+
+<section class="section" id="weather">
+  <div class="container">
+    <h2>🌡️ 20 日天气速查表</h2>
+    <table class="weather-table">
+      <thead>
+        <tr>
+          <th>日</th>
+          <th>日期</th>
+          <th>路段</th>
+          <th>温区</th>
+          <th>⭐</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ weather_rows | safe }}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="all-days" style="background:var(--bg-deep);">
+  <div class="container">
+    <h2>🗓️ 20 天详细行程</h2>
+    <p class="text-muted" style="margin-bottom:var(--s-4);">
+      点击任意卡片进入当日详情(路程 / 天气 / 穿着 / 游玩 / 注意事项)
+    </p>
+    <div class="day-grid">
+      {{ day_cards | safe }}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="tools">
+  <div class="container">
+    <h2>🧰 配套实用工具</h2>
+    <a href="{{ depth_prefix }}amap/index.html" class="card card-interactive card-accent play" style="display:block;text-decoration:none;">
+      <div style="font-size:var(--fs-xl);color:var(--brand-500);font-weight:var(--fw-bold);">🧭 高德导航行程设置</div>
+      <div style="margin-top:var(--s-3);font-weight:var(--fw-medium);">
+        一键直达链接 · 36 个 POI · 19 条路线 · 多点标注示例
+      </div>
+      <div style="color:var(--m-play);margin-top:var(--s-2);font-weight:var(--fw-semibold);">
+        复制链接 → 手机浏览器 → 自动调起高德 App → ⭐ 收藏
+      </div>
+      <div class="text-sm text-muted" style="margin-top:var(--s-2);">
+        📂 <code>/amap/index.html</code> · 5 个章节 · 共 6 页
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="section" id="prep">
+  <div class="container">
+    <h2>🎯 出发前 1 周核对清单</h2>
+
+    <div class="info-card">
+      <h3>📄 证件</h3>
+      <ul>
+        <li>全员身份证 + 老人身份证原件(65+ 必带)+ 中学生户口本原件</li>
+        <li><strong>电子边境管理区通行证</strong>:成人 APP/微信/支付宝"移民局 12367"申领</li>
+        <li>16 岁以下儿童:户籍地/目的地派出所线下办</li>
+        <li>驾驶证、行驶证、保险单(电子版)</li>
+        <li>旅游意外险(必买)</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>🚗 车辆 + 导航</h3>
+      <ul>
+        <li>车辆保养:轮胎、刹车、防冻液、机油</li>
+        <li>高德 + 百度离线地图已下载(新疆 + 甘肃 + 山西)</li>
+        <li>移动信号已确认(移动最佳)</li>
+        <li>现金 1000 元已备</li>
+        <li>油箱过半即加油(G3014、G217、G216 加油站间距大)</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h3>📱 出发前 24 h 必查</h3>
+      <ul>
+        <li><strong>新疆气象台</strong>微信公众号(伊昭、独库降雨/降雪/冰雹预警)</li>
+        <li><strong>新疆路网</strong> / <strong>平安天山</strong> / <strong>新疆交警</strong>(管制路段)</li>
+        <li><strong>独库北段预约</strong>("游新疆一码游"小程序,<strong>未预约罚 200 元/记 1 分</strong>)</li>
+        <li><strong>赛里木湖自驾票</strong>("一部手机游赛湖"预约)</li>
+        <li>白哈巴 / 喀纳斯电子票已确认</li>
+        <li>伊昭公路出发前 24 h 查白石峰管制状态</li>
+        <li>江布拉克景区(防强降雨临时闭园)</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-critical">
+      ⚠️ <strong>出门必带</strong>:6 人身份证 + 户口本(儿童)+ 现金 1000 元 + 电子边防证截图打印件
+    </div>
+  </div>
+</section>
+
+</main>
+
+{% include "footer.html" %}
+</body>
+</html>

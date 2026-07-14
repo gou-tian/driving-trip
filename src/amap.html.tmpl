@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ site_lang }}">
+<head>{% include "head.html" %}</head>
+<body>
+{% include "skip-link.html" %}
+{% include "header-amap.html" %}
+
+<header class="amap-header">
+  <div class="container">
+    <h1>{{ title }}</h1>
+    <div class="subtitle">{{ header_subtitle }}</div>
+  </div>
+</header>
+
+<main id="main" role="main" class="modules">
+  <div class="container">
+    {{ body_html | safe }}
+  </div>
+</main>
+
+{% include "footer.html" %}
+</body>
+</html>

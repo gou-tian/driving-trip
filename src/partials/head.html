@@ -1,0 +1,29 @@
+<!-- 统一 head · meta/og/canonical/favicon/JSON-LD -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#143f6e" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="xinjiang-trip build.py">
+<meta name="rating" content="general">
+<meta name="robots" content="index,follow">
+<title>{{ title }}</title>
+<meta name="description" content="{{ desc }}">
+<link rel="canonical" href="{{ canonical }}">
+<link rel="icon" href="{{ depth_prefix }}assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{ depth_prefix }}assets/apple-touch-icon.png">
+<link rel="manifest" href="{{ depth_prefix }}manifest.webmanifest">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ desc }}">
+<meta property="og:url" content="{{ canonical }}">
+<meta property="og:image" content="{{ depth_prefix }}{{ og_image }}">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title }}">
+<meta name="twitter:description" content="{{ desc }}">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="{{ css_url }}">
+<script defer src="{{ theme_js_url }}"></script>
+<script defer src="{{ weather_js_url }}"></script>
+<script type="application/ld+json">{{ jsonld }}</script>

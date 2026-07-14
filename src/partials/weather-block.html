@@ -1,0 +1,18 @@
+<div class="weather-block"
+     data-lat="{{ lat }}"
+     data-lon="{{ lon }}"
+     data-date="{{ date_str }}"
+     data-city="{{ city }}">
+  <p class="temp">
+    <strong>预测温区:</strong>{{ temp }}
+  </p>
+  <p class="desc">
+    <strong>天气:</strong>{{ weather_text }}
+  </p>
+  <p class="uv">
+    <strong>紫外线:</strong>{{ uv_label }}
+  </p>
+</div>
+<p class="text-sm text-subtle" style="margin-top:var(--s-2);">
+  💡 浏览器已自动拉取 Open-Meteo 16 天实时预报;失败时保留上方静态值
+</p>
