@@ -1,0 +1,137 @@
+# ============================================================
+# 自动部署:push main → build → rsync → gtian.cn
+# ============================================================
+# 配置 GitHub Secrets(仓库 Settings → Secrets → Actions):
+#   SSH_PRIVATE_KEY   完整 .pem 内容(包括 BEGIN/END 行)
+#   SSH_KNOWN_HOSTS   ssh-keyscan -H gtian.cn 输出
+#   REMOTE_DIR        /www/wwwroot/trip.gtian.cn/xinjiang
+# 可选 Variables:
+#   PUBLIC_URL        默认 https://trip.gtian.cn/xinjiang/
+# ============================================================
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      PUBLIC_URL: ${{ vars.PUBLIC_URL || 'https://trip.gtian.cn/xinjiang/' }}
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装 rsync + ssh client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -yqq rsync openssh-client
+
+      - name: 构建 dist/
+        run: python3 -m scripts.build --clean
+
+      - name: 验证产物
+        run: |
+          test -f dist/index.html
+          test -f dist/sitemap.xml
+          test -f dist/robots.txt
+          test -f dist/manifest.webmanifest
+          test -f dist/css/theme.min.css
+          test -f dist/js/weather.js
+          echo "✓ dist/ 核心产物齐全"
+
+      - name: 配置 SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 添加 known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: 备份远端旧版
+        env:
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: |
+          STAMP=$(date +%Y%m%d-%H%M%S)
+          BACKUP="${REMOTE_DIR}.bak.${STAMP}"
+          echo "→ 备份路径: $BACKUP"
+          ssh ubuntu@gtian.cn "
+            if [ -d \"\$REMOTE_DIR\" ]; then
+              sudo mv \"\$REMOTE_DIR\" \"\$BACKUP\" && echo '已备份'
+            else
+              echo '线上为空,跳过'
+            fi
+          "
+
+      - name: 上传 dist/
+        env:
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: |
+          sudo mkdir -p "${REMOTE_DIR}" 2>/dev/null || true
+          rsync -avz --delete --no-perms --no-owner --no-group \
+            --exclude='.DS_Store' \
+            --rsync-path="sudo rsync" \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            ./dist/ "ubuntu@gtian.cn:${REMOTE_DIR}/"
+
+      - name: chown www:www
+        env:
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: ssh ubuntu@gtian.cn "sudo chown -R www:www '${REMOTE_DIR}' || true"
+
+      - name: 在线验证
+        run: |
+          STATUS=$(curl -fsS -o /dev/null -w '%{http_code}' --max-time 15 "$PUBLIC_URL")
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ HTTP $STATUS"
+            exit 1
+          fi
+          echo "✅ HTTP 200 OK"
+          curl -fsS --max-time 15 "$PUBLIC_URL" | grep -q "新疆自驾" \
+            && echo "✅ 标题 OK" || { echo "❌ 标题缺失"; exit 1; }
+
+      - name: 清理 7 天前旧备份
+        env:
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: |
+          ssh ubuntu@gtian.cn "
+            find \"\$(dirname '$REMOTE_DIR')\" -maxdepth 1 -type d \
+              -name \"\$(basename '$REMOTE_DIR').bak.*\" \
+              -mtime +7 -exec rm -rf {} + 2>/dev/null
+            echo '旧备份清理完成'
+          "
+
+      - name: 部署成功
+        if: success()
+        env:
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: |
+          echo "🟢 部署完成!"
+          echo "   URL:    $PUBLIC_URL"
+          echo "   Target: $REMOTE_DIR"
+          echo "   Commit: ${{ github.sha }}"
+
+      - name: 部署失败
+        if: failure()
+        env:
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+        run: |
+          echo "🔴 部署失败,旧备份保留:"
+          echo "   ssh ubuntu@gtian.cn 'sudo ls -d ${REMOTE_DIR}.bak.*'"

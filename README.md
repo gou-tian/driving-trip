@@ -91,19 +91,46 @@ xinjiang-trip-website/
 
 详见 [docs/DEPLOY.md](docs/DEPLOY.md)。
 
-### Netlify / Vercel / 自托管
+### GitHub Actions 自动部署(推荐)
+
+`push main` 即触发 [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
+
+1. 检出代码
+2. `python -m scripts.build --clean`
+3. 备份线上旧版 → `xinjiang.bak.YYYYMMDD-HHMMSS`
+4. `rsync --delete` 上传(用 `--rsync-path=sudo rsync`)
+5. `chown www:www`
+6. curl 验证 200 + 关键内容
+7. 清理 7 天以上旧备份
+
+**首次配置**(一次性,GitHub 仓库 Settings → Secrets):
+
+| Secret            | 内容                                                             |
+| ----------------- | ---------------------------------------------------------------- |
+| `SSH_PRIVATE_KEY` | `cat ~/资料/个人资料/qq-cloud/QQ20270207.pem` 全文(含 BEGIN/END) |
+| `SSH_KNOWN_HOSTS` | `ssh-keyscan -H gtian.cn` 输出                                   |
+| `REMOTE_DIR`      | `/www/wwwroot/trip.gtian.cn/xinjiang`                            |
+
+可选 Variable:`PUBLIC_URL` 默认 `https://trip.gtian.cn/xinjiang/`。
 
 ```bash
-# 上传整个 dist/ 目录即可
-rsync -av dist/ user@server:/var/www/xinjiang-trip/
+# 推送触发自动部署
+git push origin main
+# → 5-15 秒后 https://trip.gtian.cn/xinjiang/ 自动更新
+```
+
+### 手动部署(本地脚本)
+
+```bash
+cd /Users/goutian/ai/claude/travel/xinjiang/xinjiang-trip-website
+./scripts/deploy.sh              # 真部署
+./scripts/deploy.sh --dry-run    # 仅模拟
+./scripts/deploy.sh --rollback   # 回滚
 ```
 
 ### 子路径兼容性
 
-全部资源用 **相对路径**(`css/theme.min.css`、`../css/theme.min.css`),无需 `<base>` 标签,可部署到:
-
-- 根域名:`https://example.com/`
-- 子路径:`https://example.com/xinjiang-trip/`(当前部署)
+全部资源用 **相对路径**(`css/theme.min.css`、`../css/theme.min.css`),无需 `<base>` 标签,可部署到根域名或任意子路径。
 
 ## 🧪 测试
 
