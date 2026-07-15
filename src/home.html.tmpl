@@ -10,9 +10,17 @@
     <h1>{{ logo_emoji }} {{ site_name }}</h1>
     <p class="subtitle">含白哈巴(不住) · 精简东疆版 · 行程 + 天气 + 穿着</p>
     <div class="meta">
-      <div class="meta-item"><strong>出发</strong> 2026/07/25</div>
-      <div class="meta-item"><strong>返程</strong> 2026/08/12</div>
-      <div class="meta-item"><strong>抵达</strong> 2026/08/13</div>
+      <div class="meta-item">
+        <strong>出发</strong>
+        <input type="date" id="xj-depart-date"
+               data-xj-depart-input
+               data-default="2026-07-23"
+               min="2026-07-01" max="2026-09-30"
+               aria-label="选择出发日期"
+               style="font:inherit;color:inherit;background:transparent;border:1px solid currentColor;border-radius:6px;padding:2px 6px;margin-left:6px;">
+      </div>
+      <div class="meta-item"><strong>返程</strong> <span data-xj-date="return">2026/08/11</span></div>
+      <div class="meta-item"><strong>抵达</strong> <span data-xj-date="arrive">2026/08/12</span></div>
       <div class="meta-item"><strong>里程</strong> ~8,400 km</div>
       <div class="meta-item"><strong>预算</strong> ~¥4,773/人</div>
       <div class="meta-item"><strong>人数</strong> 6 人(2 大 2 老 2 小)</div>
@@ -57,18 +65,32 @@
 <section class="section" id="tools">
   <div class="container">
     <h2>🧰 配套实用工具</h2>
-    <a href="{{ depth_prefix }}amap/index.html" class="card card-interactive card-accent play" style="display:block;text-decoration:none;">
-      <div style="font-size:var(--fs-xl);color:var(--brand-500);font-weight:var(--fw-bold);">🧭 高德导航行程设置</div>
-      <div style="margin-top:var(--s-3);font-weight:var(--fw-medium);">
-        一键直达链接 · 36 个 POI · 19 条路线 · 多点标注示例
-      </div>
-      <div style="color:var(--m-play);margin-top:var(--s-2);font-weight:var(--fw-semibold);">
-        复制链接 → 手机浏览器 → 自动调起高德 App → ⭐ 收藏
-      </div>
-      <div class="text-sm text-muted" style="margin-top:var(--s-2);">
-        📂 <code>/amap/index.html</code> · 5 个章节 · 共 6 页
-      </div>
-    </a>
+    <div class="card-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s-4);">
+      <a href="{{ depth_prefix }}amap/index.html" class="card card-interactive card-accent play" style="display:block;text-decoration:none;">
+        <div style="font-size:var(--fs-xl);color:var(--brand-500);font-weight:var(--fw-bold);">🧭 高德导航行程设置</div>
+        <div style="margin-top:var(--s-3);font-weight:var(--fw-medium);">
+          一键直达链接 · 36 个 POI · 19 条路线 · 多点标注示例
+        </div>
+        <div style="color:var(--m-play);margin-top:var(--s-2);font-weight:var(--fw-semibold);">
+          复制链接 → 手机浏览器 → 自动调起高德 App → ⭐ 收藏
+        </div>
+        <div class="text-sm text-muted" style="margin-top:var(--s-2);">
+          📂 <code>/amap/index.html</code> · 5 个章节 · 共 6 页
+        </div>
+      </a>
+      <a href="{{ depth_prefix }}info/" class="card card-interactive card-accent warn" style="display:block;text-decoration:none;">
+        <div style="font-size:var(--fs-xl);color:var(--brand-500);font-weight:var(--fw-bold);">📚 通用信息</div>
+        <div style="margin-top:var(--s-3);font-weight:var(--fw-medium);">
+          政策摘要 / 费用 / 门票 / 住宿价 / 边防证 / 安检 / 限行限速 / 药品 / 应急
+        </div>
+        <div style="color:var(--m-warn);margin-top:var(--s-2);font-weight:var(--fw-semibold);">
+          数据基准 2026/07/15 · 只保留参考数据
+        </div>
+        <div class="text-sm text-muted" style="margin-top:var(--s-2);">
+          📂 <code>/info/index.html</code> · 10 锚点 · 纯数据表
+        </div>
+      </a>
+    </div>
   </div>
 </section>
 

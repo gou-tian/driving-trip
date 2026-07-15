@@ -25,7 +25,10 @@ DIST_CSS = DIST / "css"
 DIST_JS = DIST / "js"
 DIST_DAY = DIST / "day"
 DIST_AMAP = DIST / "amap"
+DIST_INFO = DIST / "info"
 DIST_ASSETS = DIST / "assets"
+
+SRC_DATA_INFO = SRC_DATA / "info.json"
 
 # ============= 站点元数据 =============
 SITE_NAME = "新疆自驾 20 天"

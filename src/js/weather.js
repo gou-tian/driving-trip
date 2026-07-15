@@ -316,6 +316,16 @@
     blocks.forEach(updateBlock);
   }
 
+  // ============================================================
+  // 日期变化时(date.js 派发的 xj-depart-date-changed)重查所有 block
+  // ============================================================
+  function rerun() {
+    run();
+  }
+
+  // 暴露给 date.js / 控制台调试
+  window.__xjWeatherRefresh = rerun;
+
   function showStatusBanner(blocks, count) {
     const banner = document.createElement("div");
     banner.id = "weather-status";
@@ -377,4 +387,12 @@
   } else {
     run();
   }
+
+  // 出发日期变化(date.js 派发) → 只重新查询,不再显示 banner
+  window.addEventListener("xj-depart-date-changed", () => {
+    document.querySelectorAll(".weather-block[data-lat]").forEach((b) => {
+      b.removeAttribute("data-weather-status");
+      updateBlock(b);
+    });
+  });
 })();

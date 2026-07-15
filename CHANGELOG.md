@@ -54,6 +54,6 @@
 
 ## 数据基准
 
-- **2026/07/14** — 当前基准(trip.json + weather_cities.json)
-- 出发 **2026/07/25** — 数据使用前请评估时效性
+- **2026/07/15** — 当前基准(trip.json + weather_cities.json);本日 travel-fact-checker 重核
+- 出发 **2026/07/23** — 数据使用前请评估时效性
 - 23,104 B 数据 + 2,250 B 城市 = 25 KB

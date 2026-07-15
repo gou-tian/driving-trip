@@ -7,7 +7,7 @@
 
 <header class="day-header {{ day.route_class }}">
   <div class="container">
-    <div class="day-tag">D{{ day.num }} · {{ day.date_full }}</div>
+    <div class="day-tag">D{{ day.num }} · <span data-xj-day-num="{{ day.num }}">{{ day.date_full }}</span></div>
     <h1>{{ day.title }}</h1>
     <div class="route-summary">📍 {{ day.route }}</div>
     <div class="badges">

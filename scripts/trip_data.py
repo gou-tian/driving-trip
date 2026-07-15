@@ -58,3 +58,14 @@ def get_weather_city(days_index: list[WeatherCity], day_num: int) -> WeatherCity
         if c.day == day_num:
             return c
     return None
+
+
+def load_info() -> dict:
+    """加载 src/data/info.json(通用信息 11 section 数据)。"""
+    import json
+
+    from scripts.paths import SRC_DATA_INFO
+
+    if not SRC_DATA_INFO.exists():
+        return {}
+    return json.loads(SRC_DATA_INFO.read_text(encoding="utf-8"))

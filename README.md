@@ -2,7 +2,7 @@
 
 > 2026 年 7-8 月新疆自驾攻略 · 实时天气 + 高德导航行程一键直达
 
-[![部署](https://img.shields.io/badge/deploy-https%3A%2F%2Fgtian.cn%2Fxinjiang--trip-blue)](https://gtian.cn/xinjiang-trip)
+[![部署](https://img.shields.io/badge/deploy-trip.gtian.cn%2Fxinjiang-blue)](https://trip.gtian.cn/xinjiang/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## ✨ 特性
@@ -91,9 +91,18 @@ xinjiang-trip-website/
 
 详见 [docs/DEPLOY.md](docs/DEPLOY.md)。
 
-### GitHub Actions 自动部署(推荐)
+### 双站部署架构
 
-`push main` 即触发 [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
+| 站         | 域名                                                      | 托管                                | 触发                                                                 |
+| ---------- | --------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| **主站**   | [trip.gtian.cn/xinjiang](https://trip.gtian.cn/xinjiang/) | 腾讯云 nginx 自托管                 | `push main` → [deploy.yml](.github/workflows/deploy.yml)             |
+| **镜像站** | [driving-trip.gtian.cn](https://driving-trip.gtian.cn/)   | GitHub Pages(仓库 CNAME 指向该域名) | `push main` → [deploy-pages.yml](.github/workflows/deploy-pages.yml) |
+
+两份产物**字节级一致**(同一 dist + 同一 commit),仅 `SITE_URL` 环境变量不同 → sitemap/canonical/OG 自动指向正确的对外域名。
+
+### 主站:腾讯云 nginx
+
+[deploy.yml](.github/workflows/deploy.yml) `push main` 触发后:
 
 1. 检出代码
 2. `python -m scripts.build --clean`
@@ -103,7 +112,7 @@ xinjiang-trip-website/
 6. curl 验证 200 + 关键内容
 7. 清理 7 天以上旧备份
 
-**首次配置**(一次性,GitHub 仓库 Settings → Secrets):
+**首次配置**(GitHub 仓库 Settings → Secrets):
 
 | Secret            | 内容                                                             |
 | ----------------- | ---------------------------------------------------------------- |
@@ -119,6 +128,24 @@ git push origin main
 # → 5-15 秒后 https://trip.gtian.cn/xinjiang/ 自动更新
 ```
 
+### 镜像站:driving-trip.gtian.cn(GT 顶级域名)
+
+[deploy-pages.yml](.github/workflows/deploy-pages.yml) 用 `SITE_URL=https://driving-trip.gtian.cn/` 重新构建 dist,再经 GitHub Actions → Pages 部署:
+
+```yaml
+env:
+  SITE_URL: https://driving-trip.gtian.cn/
+run: python3 -m scripts.build --clean
+```
+
+托管方案:仓库 [gou-tian/driving-trip](https://github.com/gou-tian/driving-trip) Settings → Pages → Custom domain 设为 `driving-trip.gtian.cn`,DNS 加 CNAME `driving-trip → gou-tian.github.io`,GitHub 自动签发 Let's Encrypt。
+
+**优势**:
+
+- 顶级域名,比 `gou-tian.github.io/driving-trip/` 短 21 字符,适合纸质打印/口头分享
+- 服务器宕了仍可访问(独立可用区)
+- 与主站内容严格同步(同一 commit + 同一 commit SHA)
+
 ### 手动部署(本地脚本)
 
 ```bash
@@ -127,33 +154,6 @@ cd /Users/goutian/ai/claude/travel/xinjiang/xinjiang-trip-website
 ./scripts/deploy.sh --dry-run    # 仅模拟
 ./scripts/deploy.sh --rollback   # 回滚
 ```
-
-### GitHub Pages 镜像(可选,与主站并行)
-
-`push main` 同时触发 [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml),把构建产物部署到 GH Pages:
-
-- **URL**:https://gou-tian.github.io/driving-trip/
-- **与主站关系**:**只读镜像**,不替换主站 `trip.gtian.cn/xinjiang/`
-- **优势**:服务器宕了仍可访问,内容与 commit 严格同步
-- **SITE_URL 切换**:workflow 内 `env.SITE_URL` 覆盖 `paths.py` 默认值,让 sitemap/canonical/OG 全部指向 GH Pages 域名
-
-```yaml
-# .github/workflows/deploy-pages.yml 关键片段
-env:
-  SITE_URL: https://gou-tian.github.io/driving-trip/
-run: python3 -m scripts.build --clean
-```
-
-**设置步骤**(一次性,5 分钟):
-
-1. 进 https://github.com/gou-tian/driving-trip/settings/pages
-2. **Source** 选 **GitHub Actions**(首次会出现)
-3. 等待首次 push 自动跑完,镜像同步上线
-4. (可选)Custom domain 绑定 `pages.gtian.cn`,DNS 加 `CNAME pages → gou-tian.github.io`
-
-**对子路径透明**:GH Pages 默认在 `/<repo>/` 子路径,`paths.py` 已支持 `SITE_URL` 环境变量覆盖,所以**同一个 dist 产物**只需切 env var 即可切换两边的 canonical/og-url,无需重新生成 HTML。
-
-**配额**:公开仓库永久免费;私有仓库 100GB 流量/月 + 1GB 存储。本项目公开即可。
 
 ### 子路径兼容性
 
@@ -187,7 +187,7 @@ grep -c '<url>' dist/sitemap.xml          # → 27
 
 - **当前**:v2.0.0(全面规范化重构)
 - **数据基准**:2026/07/14
-- **出发日期**:2026/07/25
+- **出发日期**:2026/07/23
 
 详见 [CHANGELOG.md](CHANGELOG.md)。
 

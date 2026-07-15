@@ -4,6 +4,12 @@
   - 所有 partial 模板是 {{ name }} 占位
   - 渲染时把全局 context dict 传入
   - 把 partials/head.html 等作为函数式 R include 入口
+
+⚠️ 模板语法约束(2026/07/15 强化):
+  - 支持: {{ a.b.c }} 路径查找、{{ fn(arg.path) }} 单一函数调用
+  - 不支持(且会 raise,不再静默): 任何运算符、字符串字面量、format/join/filter
+  - 数字千分位、字符串拼接、URL 拼接 → 全部在 Python render_xxx() 里预算为 _fmt 字段
+  - 历史教训:写 `{{ "{:,}".format(x) }}` 会原样输出到页面,见 bug20260715100650.png
 """
 
 from __future__ import annotations
@@ -68,11 +74,41 @@ def _render_str(tmpl: str, ctx: dict) -> str:
     #   - a.b 访问 dict / obj
     #   - 函数调用 {{ pad2(d.num) }} → pad2(取整数字)
     #   - 自动忽略 Jinja-style 过滤器 {{ x | safe }} → 取 x
+    #
+    # ⚠️ 严格模式(2026/07/15 起):语法不在白名单内立即 raise,
+    #   避免历史上 `{{ "{:,}".format(x) }}` 原样输出到页面的 bug 复发。
+    _ALLOWED = re.compile(r"^([\w]+(?:\.[\w]+)*|\w+\([\w]+(?:\.[\w]+)*\))$")
+
+    def _resolve(path: str) -> Any:
+        """按 . 拆分路径查找 ctx(支持 dict/obj 任意深度 + 整数字面量段)。"""
+        cur: Any = ctx
+        for p in path.split("."):
+            # 整数字面量段(如 fn(3) 的 3)→ 原样返回
+            if p.isdigit():
+                cur = int(p)
+                continue
+            if isinstance(cur, dict):
+                cur = cur.get(p, "")
+            else:
+                cur = getattr(cur, p, "")
+            if cur is None:
+                cur = ""
+        return cur
+
     def var_repl(m):
         expr = m.group(1).strip()
         # 剥离 Jinja-style 过滤器:只取 | 之前的部分
         if "|" in expr:
             expr = expr.split("|", 1)[0].strip()
+        # 守卫:任何不在白名单的语法(运算符/字符串字面量/format/join/filter)
+        # 必须立即 raise,不允许静默退化。
+        if not _ALLOWED.match(expr):
+            raise ValueError(
+                f"模板引擎不支持此表达式: {expr!r}\n"
+                f"  ✓ 支持: 路径 {{ a.b.c }} 或单一函数调用 {{ fn(arg.path) }}\n"
+                f"  ✗ 不支持: 运算符(+/format/join/...)/字符串字面量/Jinja 过滤器\n"
+                f"  修复:在 render_xxx() 里 Python 端预算为 _fmt 字段,模板里只引用变量"
+            )
         # 支持函数调用语法 {{ fn(arg.path) }}
         m_call = re.match(r"^(\w+)\((.+)\)$", expr)
         if m_call:
@@ -80,33 +116,18 @@ def _render_str(tmpl: str, ctx: dict) -> str:
             arg_path = m_call.group(2).strip()
             fn = ctx.get(fn_name)
             if callable(fn):
-                # 求值参数
-                parts = arg_path.split(".")
-                cur: Any = ctx
-                for p in parts:
-                    if isinstance(cur, dict):
-                        cur = cur.get(p, "")
-                    else:
-                        cur = getattr(cur, p, "")
-                    if cur is None:
-                        cur = ""
                 try:
-                    return str(fn(cur))
-                except Exception:
-                    return ""
-        # 普通访问
-        parts = expr.split(".")
-        cur: Any = ctx
-        for p in parts:
-            if isinstance(cur, dict):
-                cur = cur.get(p, "")
-            else:
-                cur = getattr(cur, p, "")
-            if cur is None:
-                cur = ""
-        return str(cur)
+                    return str(fn(_resolve(arg_path)))
+                except Exception as e:
+                    raise ValueError(f"模板函数调用失败: {expr!r} → {e}") from e
+            raise ValueError(f"模板函数 {fn_name!r} 未在 ctx 中注册(只支持 ctx 内的 callable)")
+        # 普通路径访问
+        return str(_resolve(expr))
 
-    tmpl = re.sub(r"\{\{\s*([^}]+?)\s*\}\}", var_repl, tmpl)
+    # ⚠️ 2026/07/15 修复:外层 regex 改为允许内层单层 {...} 嵌套,
+    #   否则 `{{ "{:,}".format(x) }}` 里的内层 } 会让 regex 失配、
+    #   var_repl 守卫不被调用、原样输出到 HTML(见 bug20260715100650.png)。
+    tmpl = re.sub(r"\{\{\s*((?:[^{}]|\{[^{}]*\})*?)\s*\}\}", var_repl, tmpl)
     return tmpl
 
 
@@ -205,10 +226,11 @@ def render_home(days: list[Day], weather_cities: list[WeatherCity], css_ver: str
     rows = []
     for d in days:
         c = city_by_day[d.num]
+        # 用 data-xj-row-num 让 date.js 重写日期与 weather data-date
         rows.append(
-            f"<tr>"
+            f'<tr data-xj-row-num="{d.num}">'
             f'<td><a href="day/day-{d.num:02d}.html">D{d.num}</a></td>'
-            f"<td>{d.date}</td>"
+            f'<td><span data-xj-day-short="{d.num}">{d.date}</span></td>'
             f"<td>{d.route}</td>"
             f'<td><span class="weather-block" '
             f'data-lat="{c.lat}" data-lon="{c.lon}" '
@@ -231,7 +253,7 @@ def render_home(days: list[Day], weather_cities: list[WeatherCity], css_ver: str
         cards.append(
             f'<a class="day-card" href="day/day-{d.num:02d}.html">'
             f'<div class="day-num">D{d.num}</div>'
-            f'<div class="day-date">{d.date}</div>'
+            f'<div class="day-date" data-xj-day-short="{d.num}">{d.date}</div>'
             f'<div class="day-route">{d.title}</div>'
             f'<div class="day-temp">🌡️ {d.temp}</div>'
             f"{badges_html}"
@@ -393,4 +415,171 @@ def render_amap(
         }
     )
     tmpl = (SRC / "amap.html.tmpl").read_text(encoding="utf-8")
+    return _render_str(tmpl, ctx)
+
+
+# ============================================================
+# 通用信息页(/info/)
+# ============================================================
+
+
+def _join_li(items: list[str]) -> str:
+    return "\n".join(f"<li>{x}</li>" for x in items)
+
+
+def _money(n) -> str:
+    """千分位格式化整数(2026/07/15:避免在 .tmpl 里写
+    `{{ "{:,}".format(x) }}` 这种引擎不支持的表达式)。"""
+    try:
+        return f"{int(n):,}"
+    except (TypeError, ValueError):
+        return str(n)
+
+
+# 政策/门票的 tag 标签文案(2026/07/15:从 markdown 字符串改为 class+label)
+_TAG_LABEL = {
+    "ok": "✓ 一致",
+    "warn": "⚠ 修正",
+    "up": "↑ 涨价",
+    "down": "↓ 降价",
+}
+
+
+def render_info(info: dict, css_ver: str) -> str:
+    """渲染通用信息页(7 块参考数据)。
+
+    info:load_info() 加载的 dict,键详见 src/data/info.json。
+    2026/07/15 精简:删掉主观指南类(lodging 完整/single_driver/elderly_kids/
+    clothing/customs/luggage/checklist),只保留客观可查证的参考数据。
+    """
+    # ---- 1. 政策摘要表(14 行) ----
+    pol_rows = []
+    for p in info.get("policy_summary", []):
+        pol_rows.append(
+            f'<tr><td class="num">{p["n"]}</td>'
+            f"<td><strong>{p['item']}</strong></td>"
+            f'<td class="muted">{p["old"]}</td>'
+            f'<td class="hl">{p["new"]}</td>'
+            f'<td class="tag tag-{p["tag"]}">{_TAG_LABEL.get(p["tag"], p["tag"])}</td></tr>'
+        )
+    policy_rows = "\n".join(pol_rows)
+
+    # ---- 2. 费用表 ----
+    def _fee_row(r):
+        return (
+            f"<tr><td>{r['item']}</td>"
+            f'<td class="muted">{r["unit"]}</td>'
+            f'<td class="muted">{r["qty"]}</td>'
+            f'<td class="num">{_money(r["subtotal"])}</td></tr>'
+        )
+
+    fees_15d_rows = "\n".join(_fee_row(r) for r in info["fees_15d"]["rows"])
+    fees_20d_rows = "\n".join(_fee_row(r) for r in info["fees_20d"]["rows"])
+
+    # ---- 3. 门票速查 ----
+    tk_rows = []
+    for t in info.get("tickets", []):
+        tk_rows.append(
+            f"<tr><td><strong>{t['spot']}</strong></td>"
+            f'<td class="muted">{t["old_price"]}</td>'
+            f'<td class="hl">{t["new_price"]}</td>'
+            f'<td class="num muted">{_money(t["old_total"])}</td>'
+            f'<td class="num hl">{_money(t["new_total"])}</td>'
+            f'<td class="tag tag-{t["tag"]}">{_TAG_LABEL.get(t["tag"], t["tag"])}</td></tr>'
+        )
+    tickets_rows = "\n".join(tk_rows)
+
+    # ---- 4. 住宿价格区间 ----
+    lp_rows = []
+    for p in info.get("lodging_prices", []):
+        lp_rows.append(
+            f"<tr><td>{p['range']}</td>"
+            f'<td class="num">{_money(p["min"])} – {_money(p["max"])} 元/晚</td></tr>'
+        )
+    lodging_prices = "\n".join(lp_rows)
+
+    # ---- 5. 加油站/服务区安检 ----
+    fc_rows = []
+    for fc in info.get("fuel_check", []):
+        fc_rows.append(f"<tr><td><strong>{fc['scene']}</strong></td><td>{fc['way']}</td></tr>")
+    fuel_check_rows = "\n".join(fc_rows)
+
+    # ---- 6. 关键限行/限速/预约数据 ----
+    kr_rows = []
+    for r in info.get("key_restrictions", []):
+        kr_rows.append(f"<tr><td><strong>{r['item']}</strong></td><td>{r['rule']}</td></tr>")
+    key_restrictions_rows = "\n".join(kr_rows)
+
+    # ---- 7. 药品精简清单 ----
+    med_rows = []
+    for m in info.get("medicine", []):
+        med_rows.append(f"<tr><td><strong>{m['cat']}</strong></td><td>{m['items']}</td></tr>")
+    medicine_rows = "\n".join(med_rows)
+
+    # ---- 8. 应急电话 ----
+    em_rows = []
+    for e in info.get("emergency", []):
+        em_rows.append(
+            f'<tr><td class="icon">{e["icon"]}</td>'
+            f"<td>{e['name']}</td>"
+            f'<td><code class="tel">{e["tel"]}</code></td></tr>'
+        )
+    emergency_rows = "\n".join(em_rows)
+
+    # ---- 9. 关键来源 ----
+    src_rows = []
+    for s in info.get("sources", []):
+        src_rows.append(
+            f"<tr><td><strong>{s['topic']}</strong></td>"
+            f'<td class="text-sm muted">{s["url"]}</td></tr>'
+        )
+    source_rows = "\n".join(src_rows)
+
+    # ---- 10. 电子边防证(多字段拼装) ----
+    bp = info.get("border_permit", {})
+    border_permit_channels = _join_li(bp.get("channels", []))
+    border_permit_minor_docs = _join_li(bp.get("minor_required_docs", []))
+
+    ctx = common_context()
+    ctx.update(
+        {
+            "title": f"{info['meta']['title']} · {SITE_NAME}",
+            "desc": "费用 / 门票 / 边防证 / 限行 / 限速 / 加油站安检 / 应急(2026/07/15)",
+            "og_type": "website",
+            "og_image": "assets/og-default.png",
+            "canonical": f"{SITE_URL}/info/",
+            "jsonld": jsonld_article(info["meta"]["title"], "新疆自驾 7 块参考数据(2026/07/15)"),
+            "css_ver": css_ver,
+            "depth": 1,
+            "depth_prefix": "../",
+            "css_url": render_css_url(css_ver, depth=1),
+            "weather_js_url": render_js_url("weather.js", depth=1),
+            "theme_js_url": render_js_url("theme.js", depth=1),
+            "page": "info",
+            "is_info": True,
+            "info": info,
+            "policy_rows": policy_rows,
+            "fees_15d_rows": fees_15d_rows,
+            "fees_20d_rows": fees_20d_rows,
+            "fees_tips": _join_li(info.get("fees_tips", [])),
+            "fees_15d_budget_total_fmt": _money(info["fees_15d"]["budget_total"]),
+            "fees_15d_per_capita_fmt": _money(info["fees_15d"]["per_capita"]),
+            "fees_20d_budget_total_fmt": _money(info["fees_20d"]["budget_total"]),
+            "fees_20d_per_capita_fmt": _money(info["fees_20d"]["per_capita"]),
+            "tickets_total_old_fmt": _money(info.get("tickets_total_old", 0)),
+            "tickets_total_new_fmt": _money(info.get("tickets_total_new", 0)),
+            "tickets_rows": tickets_rows,
+            "lodging_prices": lodging_prices,
+            "border_permit": bp,
+            "border_permit_channels": border_permit_channels,
+            "border_permit_minor_docs": border_permit_minor_docs,
+            "fuel_check_rows": fuel_check_rows,
+            "key_restrictions_rows": key_restrictions_rows,
+            "medicine_rows": medicine_rows,
+            "emergency_rows": emergency_rows,
+            "source_rows": source_rows,
+            "home_link": "../index.html",
+        }
+    )
+    tmpl = (SRC / "info.html.tmpl").read_text(encoding="utf-8")
     return _render_str(tmpl, ctx)

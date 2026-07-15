@@ -43,9 +43,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 构建 dist/(覆盖 SITE_URL 为 GH Pages URL)
+      - name: 构建 dist/(SITE_URL 覆盖为镜像站顶级域名)
         env:
-          SITE_URL: https://gou-tian.github.io/driving-trip/
+          SITE_URL: https://driving-trip.gtian.cn/
         run: python3 -m scripts.build --clean
 
       - name: 验证产物

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="{{ site_lang }}">
+<head>{% include "head.html" %}</head>
+<body>
+{% include "skip-link.html" %}
+{% include "header-info.html" %}
+
+<header class="page-header" style="background:var(--bg-deep);padding:var(--s-7) 0 var(--s-6);">
+  <div class="container">
+    <h1>{{ info.meta.title }}</h1>
+    <p class="subtitle">{{ info.meta.subtitle }}</p>
+    <div class="meta">
+      <div class="meta-item"><strong>出发</strong> {{ info.meta.depart_full }}</div>
+      <div class="meta-item"><strong>返程</strong> {{ info.meta.return_full }}</div>
+      <div class="meta-item"><strong>数据基准</strong> {{ info.meta.updated }}</div>
+      <div class="meta-item"><strong>预算</strong> {{ info.intro.budget }}</div>
+    </div>
+  </div>
+</header>
+
+<nav class="subnav container" aria-label="本页导航">
+  <a href="#policy">1. 政策摘要</a>
+  <a href="#fees">2. 费用</a>
+  <a href="#tickets">3. 门票</a>
+  <a href="#lodging">4. 住宿</a>
+  <a href="#border">5. 边防证</a>
+  <a href="#fuel">6. 安检</a>
+  <a href="#restrictions">7. 限行/限速</a>
+  <a href="#medicine">8. 药品</a>
+  <a href="#emergency">9. 应急</a>
+  <a href="#sources">10. 来源</a>
+</nav>
+
+<main id="main" role="main" class="modules container">
+
+  <!-- 1. 政策/价格变更摘要 -->
+  <section class="module" id="policy">
+    <h2><span class="icon">📌</span> 一、2026/07/15 政策/价格变更摘要</h2>
+    <div class="module-body">
+      <table class="data-table data-table-num">
+        <thead>
+          <tr><th>#</th><th>项目</th><th>旧数据</th><th>最新数据</th><th>性质</th></tr>
+        </thead>
+        <tbody>{{ policy_rows | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2. 费用明细 -->
+  <section class="module" id="fees">
+    <h2><span class="icon">💰</span> 二、费用明细(6 人合计)</h2>
+    <div class="module-body">
+      <h3 class="sub">{{ info.fees_15d.name }}<span class="total">约 {{ fees_15d_budget_total_fmt }} 元 · 人均 {{ fees_15d_per_capita_fmt }}</span></h3>
+      <table class="data-table data-table-num">
+        <thead><tr><th>项目</th><th>单价</th><th>数量</th><th class="num-th">小计(元)</th></tr></thead>
+        <tbody>{{ fees_15d_rows | safe }}</tbody>
+        <tfoot>
+          <tr><th colspan="3" class="t-right">合计</th><th class="num">约 {{ fees_15d_budget_total_fmt }} 元</th></tr>
+          <tr><th colspan="3" class="t-right">人均</th><th class="num">约 {{ fees_15d_per_capita_fmt }} 元 ✓</th></tr>
+        </tfoot>
+      </table>
+
+      <h3 class="sub">{{ info.fees_20d.name }}<span class="total warn">约 {{ fees_20d_budget_total_fmt }} 元 · 人均 ≈ {{ fees_20d_per_capita_fmt }} · 微超 5,000 目标</span></h3>
+      <table class="data-table data-table-num">
+        <thead><tr><th>项目</th><th>单价</th><th>数量</th><th class="num-th">小计(元)</th></tr></thead>
+        <tbody>{{ fees_20d_rows | safe }}</tbody>
+        <tfoot>
+          <tr><th colspan="3" class="t-right">合计</th><th class="num">约 {{ fees_20d_budget_total_fmt }} 元</th></tr>
+          <tr><th colspan="3" class="t-right">人均</th><th class="num">约 {{ fees_20d_per_capita_fmt }} 元 ⚠</th></tr>
+        </tfoot>
+      </table>
+
+      <ul class="tip-list">{{ fees_tips | safe }}</ul>
+    </div>
+  </section>
+
+  <!-- 3. 景区门票 -->
+  <section class="module" id="tickets">
+    <h2><span class="icon">🎫</span> 三、景区门票速查(6 人 · 2026/07/15 更新)</h2>
+    <div class="module-body">
+      <table class="data-table data-table-num">
+        <thead>
+          <tr><th>景点</th><th>原票价</th><th>新票价</th><th class="num-th">6 人原合计</th><th class="num-th">6 人新合计</th><th>性质</th></tr>
+        </thead>
+        <tbody>{{ tickets_rows | safe }}</tbody>
+        <tfoot>
+          <tr><th colspan="3" class="t-right">门票总计</th><th class="num muted">{{ tickets_total_old_fmt }} 元</th><th class="num hl">{{ tickets_total_new_fmt }} 元</th><th></th></tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. 住宿价格区间 -->
+  <section class="module" id="lodging">
+    <h2><span class="icon">🏡</span> 四、六人民宿价格区间(经济实惠型)</h2>
+    <div class="module-body">
+      <table class="data-table data-table-num">
+        <thead><tr><th>城市/景区</th><th class="num-th">六人间价格(元/晚)</th></tr></thead>
+        <tbody>{{ lodging_prices | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 5. 电子边防证 -->
+  <section class="module" id="border">
+    <h2><span class="icon">📄</span> 五、电子边防证</h2>
+    <div class="module-body">
+      <p><strong>政策:</strong>{{ border_permit.policy }}</p>
+      <h3 class="sub">申领渠道</h3>
+      <ul class="dot-list">{{ border_permit_channels | safe }}</ul>
+      <h3 class="sub">勾选区域</h3>
+      <p>{{ border_permit.regions }}</p>
+      <h3 class="sub">成人网办</h3>
+      <p>提前 <strong>{{ border_permit.adult_lead_days }}</strong>办理。</p>
+      <h3 class="sub">16 岁以下(偕行方式)</h3>
+      <p>{{ border_permit.minor_method }},需携带:</p>
+      <ul class="dot-list">{{ border_permit_minor_docs | safe }}</ul>
+      <p class="warn-box">{{ border_permit.minor_note }}</p>
+      <p class="muted text-sm"><strong>未办后果:</strong>{{ border_permit.fine_if_no }}</p>
+    </div>
+  </section>
+
+  <!-- 6. 加油站/服务区安检 -->
+  <section class="module" id="fuel">
+    <h2><span class="icon">⛽</span> 六、加油站/服务区安检口径(2026 现行)</h2>
+    <div class="module-body">
+      <table class="data-table">
+        <thead><tr><th>场景</th><th>验证方式</th></tr></thead>
+        <tbody>{{ fuel_check_rows | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7. 关键限行/限速/预约数据 -->
+  <section class="module" id="restrictions">
+    <h2><span class="icon">🚧</span> 七、关键限行 / 限速 / 预约数据</h2>
+    <div class="module-body">
+      <table class="data-table">
+        <thead><tr><th>项目</th><th>规定</th></tr></thead>
+        <tbody>{{ key_restrictions_rows | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 8. 药品清单 -->
+  <section class="module" id="medicine">
+    <h2><span class="icon">💊</span> 八、药品精简清单(按人分装)</h2>
+    <div class="module-body">
+      <table class="data-table">
+        <thead><tr><th>类别</th><th>药品</th></tr></thead>
+        <tbody>{{ medicine_rows | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9. 应急电话 -->
+  <section class="module" id="emergency">
+    <h2><span class="icon">📞</span> 九、应急电话</h2>
+    <div class="module-body">
+      <table class="data-table data-table-tel">
+        <thead><tr><th></th><th>名称</th><th class="num-th">电话</th></tr></thead>
+        <tbody>{{ emergency_rows | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10. 关键来源 -->
+  <section class="module" id="sources">
+    <h2><span class="icon">📚</span> 十、关键来源(2026/07/15 版更新依据)</h2>
+    <div class="module-body">
+      <table class="data-table">
+        <thead><tr><th>主题</th><th>来源</th></tr></thead>
+        <tbody>{{ source_rows | safe }}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <nav class="day-nav" aria-label="返回">
+    <a class="home" href="../index.html">🏠 返回首页</a>
+  </nav>
+
+</main>
+
+{% include "footer.html" %}
+</body>
+</html>

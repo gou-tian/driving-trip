@@ -30,6 +30,7 @@ from scripts.paths import (  # noqa: E402
     DIST_ASSETS,
     DIST_CSS,
     DIST_DAY,
+    DIST_INFO,
     DIST_JS,
     ROOT,
     SITE_NAME,
@@ -40,7 +41,7 @@ from scripts.paths import (  # noqa: E402
     SRC_JS,
     file_hash,
 )
-from scripts.trip_data import load_days, load_weather_cities  # noqa: E402
+from scripts.trip_data import load_days, load_info, load_weather_cities  # noqa: E402
 
 
 # ============================================================
@@ -99,14 +100,14 @@ def build_amap_bodies() -> dict[str, str]:
   <h2>🧭 高德导航行程设置指南</h2>
   <p>适用 App:<strong>高德地图</strong>(iOS / Android 最新版)</p>
   <p>适用行程:<a href="../index.html">一站式手册</a>(20 天 · 含白哈巴版)</p>
-  <p>出发:<strong>2026/07/25</strong> → 返程:<strong>2026/08/12</strong></p>
-  <p>数据基准:2026/07/14</p>
+  <p>出发:<strong>2026/07/23</strong> → 返程:<strong>2026/08/11</strong></p>
+  <p>数据基准:2026/07/15</p>
 </div>
 <div class="info-block">
   <h2>📑 三步走</h2>
   <ol>
-    <li><strong>出发前 1 周</strong>(7/18 前):登录账号 + 下载离线地图</li>
-    <li><strong>出发前 2 天</strong>(7/20):收藏 36 个 POI + 建 19 条路线</li>
+    <li><strong>出发前 1 周</strong>(7/16 前):登录账号 + 下载离线地图</li>
+    <li><strong>出发前 2 天</strong>(7/21):收藏 36 个 POI + 建 19 条路线</li>
     <li><strong>每天出发前</strong>:检查路线 + 设置导航偏好</li>
   </ol>
 </div>
@@ -396,6 +397,7 @@ def build_all(clean: bool = False, minify: bool = False) -> dict:
     DIST_JS.mkdir(parents=True, exist_ok=True)
     DIST_DAY.mkdir(parents=True, exist_ok=True)
     DIST_AMAP.mkdir(parents=True, exist_ok=True)
+    DIST_INFO.mkdir(parents=True, exist_ok=True)
 
     # 1. CSS 合并
     css_out, css_ver = merge_css()
@@ -404,6 +406,7 @@ def build_all(clean: bool = False, minify: bool = False) -> dict:
     # 2. 数据加载
     days = load_days()
     cities = load_weather_cities()
+    info = load_info()
 
     # 3. 首页
     home_html = render_mod.render_home(days, cities, css_ver)
@@ -418,10 +421,19 @@ def build_all(clean: bool = False, minify: bool = False) -> dict:
     # 5. AMAP
     amap_pages = build_amap_pages(css_ver)
 
-    # 6. JS + assets 复制
+    # 6. 通用信息(/info/)
+    if info:
+        info_html = render_mod.render_info(info, css_ver)
+        info_index = DIST_INFO / "index.html"
+        info_index.write_text(info_html, encoding="utf-8")
+        info_pages = [info_index]
+    else:
+        info_pages = []
+
+    # 7. JS + assets 复制
     static = copy_static()
 
-    # 7. SEO 产物
+    # 8. SEO 产物
     seo_files = seo_mod.run()
 
     files = (
@@ -429,6 +441,7 @@ def build_all(clean: bool = False, minify: bool = False) -> dict:
         + [DIST / "index.html"]
         + list((DIST_DAY).glob("*.html"))
         + amap_pages
+        + info_pages
         + static
         + seo_files
     )
@@ -445,6 +458,7 @@ def build_all(clean: bool = False, minify: bool = False) -> dict:
         "home": str(DIST / "index.html"),
         "days": len(days),
         "amap": len(amap_pages),
+        "info": len(info_pages),
         "static": len(static),
         "seo": [str(s) for s in seo_files],
         "total_files": len(files),
@@ -502,6 +516,7 @@ def main() -> int:
     print(f"📄 首页: {summary['home']}")
     print(f"📅 每日详情页: {summary['days']} 个")
     print(f"🗺  AMAP 页面: {summary['amap']} 个")
+    print(f"📚 通用信息: {summary['info']} 页")
     print(f"📁 静态资源: {summary['static']} 个")
     print(f"🔍 SEO 产物: {len(summary['seo'])} 个")
     print(f"   - {chr(10).join(summary['seo'])}")
