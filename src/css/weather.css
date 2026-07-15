@@ -6,6 +6,68 @@
  *   属性契约:data-lat / data-lon / data-date / data-weather-status
  * ============================================================ */
 
+/* ============================================================
+ * 日期选择器控件
+ * ============================================================ */
+.weather-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: color-mix(in srgb, var(--brand-500) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-500) 18%, transparent);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+}
+
+.weather-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+.weather-controls input[type="date"] {
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.weather-controls input[type="date"]:hover {
+  border-color: var(--brand-500);
+}
+
+.weather-controls input[type="date"]:focus-visible {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-500) 25%, transparent);
+}
+
+.weather-controls-hint {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-normal);
+}
+
+/* 暗色模式适配 */
+:root[data-theme="dark"] .weather-controls {
+  background: color-mix(in srgb, var(--brand-500) 14%, transparent);
+  border-color: color-mix(in srgb, var(--brand-500) 30%, transparent);
+}
+
+:root[data-theme="dark"] .weather-controls input[type="date"] {
+  color-scheme: dark;
+}
+
 .weather-block {
   font-size: var(--fs-base);
   color: var(--text);

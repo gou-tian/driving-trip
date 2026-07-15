@@ -1,3 +1,17 @@
+<div class="weather-controls">
+  <label for="weather-date-input">
+    📅 查询日期:
+    <input
+      type="date"
+      id="weather-date-input"
+      data-xj-weather-date
+      aria-label="选择要查询的天气日期"
+    />
+  </label>
+  <span class="weather-controls-hint">
+    (默认今天 · 范围 ≤15 天)
+  </span>
+</div>
 <div class="weather-block"
      data-lat="{{ lat }}"
      data-lon="{{ lon }}"

@@ -33,6 +33,20 @@
 <section class="section" id="weather">
   <div class="container">
     <h2>🌡️ 20 日天气速查表</h2>
+    <div class="weather-controls">
+      <label for="weather-date-input">
+        📅 查询日期:
+        <input
+          type="date"
+          id="weather-date-input"
+          data-xj-weather-date
+          aria-label="选择要查询的天气日期"
+        />
+      </label>
+      <span class="weather-controls-hint">
+        (默认今天 · 范围 ≤15 天 · 影响 20 行所有城市)
+      </span>
+    </div>
     <table class="weather-table">
       <thead>
         <tr>

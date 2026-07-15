@@ -297,6 +297,14 @@ def render_day(day: Day, weather_cities: list[WeatherCity], css_ver: str) -> str
     uv_label = "极强(极热段)" if day.weather_class == "hot" else "强(山区弱、平原强)"
     if city:
         weather_block = (
+            f'<div class="weather-controls">'
+            f'<label for="weather-date-input">'
+            f"📅 查询日期:"
+            f'<input type="date" id="weather-date-input" '
+            f'data-xj-weather-date aria-label="选择要查询的天气日期" />'
+            f"</label>"
+            f'<span class="weather-controls-hint">(默认今天 · 范围 ≤15 天)</span>'
+            f"</div>"
             f'<div class="weather-block" '
             f'data-lat="{city.lat}" data-lon="{city.lon}" '
             f'data-date="{city.date}" data-city="{city.city}">'

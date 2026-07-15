@@ -126,6 +126,72 @@
   }
 
   // ============================================================
+  // 日期选择器 · 用户可改,默认今天
+  // ============================================================
+  function todayISO() {
+    const { todayStr } = boundary();
+    return todayStr;
+  }
+
+  function maxISO() {
+    const { maxStr } = boundary();
+    return maxStr;
+  }
+
+  /**
+   * 解析每个 block 应该查询的日期。
+   * 优先级:页面内的 [data-xj-weather-date] picker > block.dataset.weatherQuery > 今天
+   * 单独属性 weatherQuery 避免与 date.js 写入的 data-date(trip 日期)冲突。
+   */
+  function resolveQueryDate(block) {
+    const picker = document.querySelector("[data-xj-weather-date]");
+    if (picker && picker.value && isValidISO(picker.value)) {
+      return picker.value;
+    }
+    if (block && block.dataset.weatherQuery && isValidISO(block.dataset.weatherQuery)) {
+      return block.dataset.weatherQuery;
+    }
+    return todayISO();
+  }
+
+  function isValidISO(s) {
+    return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
+  }
+
+  function bindDatePicker() {
+    const pickers = document.querySelectorAll("[data-xj-weather-date]");
+    if (!pickers.length) return;
+
+    const today = todayISO();
+    const max = maxISO();
+    pickers.forEach((p) => {
+      p.min = today;
+      p.max = max;
+      if (!p.value) p.value = today;
+    });
+
+    const onChange = (e) => {
+      const v = e.target.value;
+      if (!isValidISO(v)) return;
+      if (v < today || v > max) {
+        e.target.value = today;
+        return;
+      }
+      // 同步所有 picker(多 picker 场景:首页全局 + 每行本地)
+      pickers.forEach((p) => {
+        if (p !== e.target) p.value = v;
+      });
+      // 重查所有 block
+      document.querySelectorAll(".weather-block[data-lat]").forEach((b) => {
+        b.removeAttribute("data-weather-status");
+        updateBlock(b);
+      });
+    };
+
+    pickers.forEach((p) => p.addEventListener("change", onChange));
+  }
+
+  // ============================================================
   // 缓存:同 lat/lon 的请求合并
   // ============================================================
   const cache = new Map();
@@ -204,7 +270,8 @@
       e.stopPropagation();
       const lat = parseFloat(block.dataset.lat);
       const lon = parseFloat(block.dataset.lon);
-      const d = block.dataset.date;
+      // 用 picker / weatherQuery / today,不读 data-date(避免和 date.js 冲突)
+      const d = resolveQueryDate(block) || block.dataset.weatherQuery || todayISO();
       const key = `${lat.toFixed(3)},${lon.toFixed(3)}|${d}|${d}`;
       cache.delete(key); // 强制重拉
       showLoading(block);
@@ -235,7 +302,8 @@
   async function updateBlock(block) {
     const lat = parseFloat(block.dataset.lat);
     const lon = parseFloat(block.dataset.lon);
-    const date = block.dataset.date;
+    // 查询日期优先级:picker > 默认今天;block.dataset.date 作 fallback
+    const date = resolveQueryDate(block) || block.dataset.date;
 
     if (!isFinite(lat) || !isFinite(lon) || !date) {
       block.dataset.weatherStatus = "static";
@@ -297,6 +365,9 @@
       // 追加 meta(时间戳 + 刷新按钮)
       block.appendChild(makeMeta(date, block));
 
+      // 记录查询日期(独立于 data-date;data-date 留给 date.js 管 trip 日期)
+      block.dataset.weatherQuery = date;
+
       block.dataset.weatherStatus = "live";
     } catch (err) {
       console.warn("[weather] 实时查询失败,保留静态:", err.message);
@@ -311,6 +382,7 @@
     const blocks = document.querySelectorAll(".weather-block[data-lat]");
     if (!blocks.length) return;
 
+    bindDatePicker();
     showStatusBanner(blocks, blocks.length);
 
     blocks.forEach(updateBlock);
