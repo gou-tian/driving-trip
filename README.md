@@ -128,6 +128,33 @@ cd /Users/goutian/ai/claude/travel/xinjiang/xinjiang-trip-website
 ./scripts/deploy.sh --rollback   # 回滚
 ```
 
+### GitHub Pages 镜像(可选,与主站并行)
+
+`push main` 同时触发 [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml),把构建产物部署到 GH Pages:
+
+- **URL**:https://gou-tian.github.io/driving-trip/
+- **与主站关系**:**只读镜像**,不替换主站 `trip.gtian.cn/xinjiang/`
+- **优势**:服务器宕了仍可访问,内容与 commit 严格同步
+- **SITE_URL 切换**:workflow 内 `env.SITE_URL` 覆盖 `paths.py` 默认值,让 sitemap/canonical/OG 全部指向 GH Pages 域名
+
+```yaml
+# .github/workflows/deploy-pages.yml 关键片段
+env:
+  SITE_URL: https://gou-tian.github.io/driving-trip/
+run: python3 -m scripts.build --clean
+```
+
+**设置步骤**(一次性,5 分钟):
+
+1. 进 https://github.com/gou-tian/driving-trip/settings/pages
+2. **Source** 选 **GitHub Actions**(首次会出现)
+3. 等待首次 push 自动跑完,镜像同步上线
+4. (可选)Custom domain 绑定 `pages.gtian.cn`,DNS 加 `CNAME pages → gou-tian.github.io`
+
+**对子路径透明**:GH Pages 默认在 `/<repo>/` 子路径,`paths.py` 已支持 `SITE_URL` 环境变量覆盖,所以**同一个 dist 产物**只需切 env var 即可切换两边的 canonical/og-url,无需重新生成 HTML。
+
+**配额**:公开仓库永久免费;私有仓库 100GB 流量/月 + 1GB 存储。本项目公开即可。
+
 ### 子路径兼容性
 
 全部资源用 **相对路径**(`css/theme.min.css`、`../css/theme.min.css`),无需 `<base>` 标签,可部署到根域名或任意子路径。
