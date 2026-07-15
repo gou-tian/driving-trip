@@ -114,6 +114,116 @@
     return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
   }
 
+  // ============================================================
+  // 穿着建议生成器 · 基于实时天气
+  //
+  // 输入:Open-Meteo 解析出的单日数据
+  //   { tmax, tmin, code, wind, precip, uv }
+  // 输出:DOM 节点(用 <strong> 强调温差/紫外线/雨)
+  // 安全:全部 createElement + textContent,无 innerHTML
+  // ============================================================
+  function strongEl(text) {
+    const s = document.createElement("strong");
+    s.textContent = text;
+    return s;
+  }
+
+  function buildClothesNode(w) {
+    const { tmax, tmin, code, wind, precip, uv } = w;
+    const onion = tmax - tmin >= 12;
+    // WMO 雪:71/73/75/77 + 85/86;雨:51-67 + 80-82 + 95-99
+    const isSnow =
+      code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86;
+    const isRain = precip > 0 && !isSnow;
+    const wrap = document.createDocumentFragment();
+    let first = true;
+    const push = (node) => {
+      if (!first) wrap.appendChild(document.createTextNode(" · "));
+      wrap.appendChild(node);
+      first = false;
+    };
+    const pushText = (text) => {
+      const tn = document.createTextNode(text);
+      if (!first) wrap.appendChild(document.createTextNode(" · "));
+      wrap.appendChild(tn);
+      first = false;
+    };
+
+    // 洋葱式前置
+    if (onion) push(strongEl("洋葱式"));
+
+    // 上装 · 6 档(按 tmax 主导)
+    if (tmax < 0) pushText("羽绒服 + 毛衣 + 加绒裤");
+    else if (tmax < 10) pushText("厚外套 + 毛衣");
+    else if (tmax < 18) pushText("长袖 + 薄外套");
+    else if (tmax < 25) pushText("长袖/短袖 + 防晒衣");
+    else if (tmax < 32) pushText("短袖 + 防晒衣");
+    else pushText("短袖 + 遮阳帽");
+
+    // 早晚加衣 · 按 tmin
+    if (tmin < 0) {
+      const span = document.createElement("span");
+      span.appendChild(document.createTextNode("(早晚 "));
+      span.appendChild(strongEl(`${tmin}℃ 加薄羽绒`));
+      span.appendChild(document.createTextNode(")"));
+      push(span);
+    } else if (tmin < 10) pushText(`(早晚 ${tmin}℃ 加薄外套)`);
+    else if (tmin < 15) pushText(`(早晚 ${tmin}℃ 备薄外套)`);
+
+    // 鞋
+    if (isSnow) pushText("防水鞋 + 防滑底");
+    else if (isRain && tmax < 15) pushText("防水徒步鞋");
+    else if (onion || code === 45 || code === 48) pushText("运动鞋或轻徒步");
+    else pushText("运动鞋");
+
+    // 紫外线
+    if (uv >= 8) push(strongEl("宽檐帽 + 墨镜 + SPF 50+"));
+    else if (uv >= 6) pushText("防晒霜 + 帽子");
+    else if (uv >= 3) pushText("防晒霜");
+
+    // 雨
+    if (precip >= 5) push(strongEl("雨衣必备"));
+    else if (precip > 0) pushText("雨伞/雨衣");
+
+    // 风
+    if (wind >= 40) pushText("防风外套");
+
+    // 雪
+    if (isSnow) pushText("保暖内层 + 防水手套");
+
+    return wrap;
+  }
+
+  function updateClothes(block, weatherData) {
+    const el = document.querySelector("[data-xj-clothes]");
+    if (!el) return;
+    const queryDate = block.dataset.weatherQuery || block.dataset.date;
+    const idx = weatherData.daily.time.indexOf(queryDate);
+    if (idx < 0) return;
+    const w = {
+      tmax: Math.round(weatherData.daily.temperature_2m_max[idx]),
+      tmin: Math.round(weatherData.daily.temperature_2m_min[idx]),
+      code: weatherData.daily.weather_code[idx],
+      wind: weatherData.daily.wind_speed_10m_max[idx],
+      precip: weatherData.daily.precipitation_sum[idx],
+      uv: weatherData.daily.uv_index_max[idx],
+    };
+    while (el.firstChild) el.removeChild(el.firstChild);
+    el.appendChild(buildClothesNode(w));
+    el.dataset.clothesStatus = "live";
+  }
+
+  function resetClothes() {
+    const el = document.querySelector("[data-xj-clothes]");
+    if (!el) return;
+    const trip = el.dataset.tripClothes;
+    if (trip) {
+      // trip-clothes 是模板渲染的 HTML(作者预先写好,<strong> 等是受信任的)
+      el.innerHTML = trip;
+      el.dataset.clothesStatus = "trip";
+    }
+  }
+
   // 兼容旧调用(name 仍保留)
   function getForecastRange() {
     const { today, max } = boundary();
@@ -369,9 +479,13 @@
       block.dataset.weatherQuery = date;
 
       block.dataset.weatherStatus = "live";
+
+      // 穿着建议也跟着实时更新
+      updateClothes(block, data);
     } catch (err) {
       console.warn("[weather] 实时查询失败,保留静态:", err.message);
       showError(block, block.dataset.fallback || "22–34℃");
+      resetClothes();
     }
   }
 

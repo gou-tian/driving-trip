@@ -35,7 +35,10 @@
   <section class="module clothes">
     <h2><span class="icon">👔</span> 穿着</h2>
     <div class="module-body">
-      <p>{{ day.clothes }}</p>
+      <p data-xj-clothes data-trip-clothes="{{ day.clothes }}">{{ day.clothes }}</p>
+      <p class="text-sm text-subtle" style="margin-top:var(--s-2);">
+        💡 上方会随上方天气查询日期实时更新(默认今天);失败时回退 trip 建议
+      </p>
     </div>
   </section>
 
