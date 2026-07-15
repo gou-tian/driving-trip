@@ -464,7 +464,7 @@ def render_info(info: dict, css_ver: str) -> str:
         )
     policy_rows = "\n".join(pol_rows)
 
-    # ---- 2. 费用表 ----
+    # ---- 2. 费用表(2026/07/15 精简:只保留 20d) ----
     def _fee_row(r):
         return (
             f"<tr><td>{r['item']}</td>"
@@ -473,18 +473,15 @@ def render_info(info: dict, css_ver: str) -> str:
             f'<td class="num">{_money(r["subtotal"])}</td></tr>'
         )
 
-    fees_15d_rows = "\n".join(_fee_row(r) for r in info["fees_15d"]["rows"])
-    fees_20d_rows = "\n".join(_fee_row(r) for r in info["fees_20d"]["rows"])
+    fees_rows = "\n".join(_fee_row(r) for r in info["fees"]["rows"])
 
-    # ---- 3. 门票速查 ----
+    # ---- 3. 门票速查(2026/07/15 精简:只保留最新价格) ----
     tk_rows = []
     for t in info.get("tickets", []):
         tk_rows.append(
             f"<tr><td><strong>{t['spot']}</strong></td>"
-            f'<td class="muted">{t["old_price"]}</td>'
-            f'<td class="hl">{t["new_price"]}</td>'
-            f'<td class="num muted">{_money(t["old_total"])}</td>'
-            f'<td class="num hl">{_money(t["new_total"])}</td>'
+            f'<td class="price">{t["price"]}</td>'
+            f'<td class="num hl">{_money(t["total"])}</td>'
             f'<td class="tag tag-{t["tag"]}">{_TAG_LABEL.get(t["tag"], t["tag"])}</td></tr>'
         )
     tickets_rows = "\n".join(tk_rows)
@@ -559,15 +556,15 @@ def render_info(info: dict, css_ver: str) -> str:
             "is_info": True,
             "info": info,
             "policy_rows": policy_rows,
-            "fees_15d_rows": fees_15d_rows,
-            "fees_20d_rows": fees_20d_rows,
+            "fees_rows": fees_rows,
             "fees_tips": _join_li(info.get("fees_tips", [])),
-            "fees_15d_budget_total_fmt": _money(info["fees_15d"]["budget_total"]),
-            "fees_15d_per_capita_fmt": _money(info["fees_15d"]["per_capita"]),
-            "fees_20d_budget_total_fmt": _money(info["fees_20d"]["budget_total"]),
-            "fees_20d_per_capita_fmt": _money(info["fees_20d"]["per_capita"]),
-            "tickets_total_old_fmt": _money(info.get("tickets_total_old", 0)),
-            "tickets_total_new_fmt": _money(info.get("tickets_total_new", 0)),
+            "fees_budget_total_fmt": _money(info["fees"]["budget_total"]),
+            "fees_per_capita_fmt": _money(info["fees"]["per_capita"]),
+            "fees_warn_class": " warn" if info["fees"].get("over_old_budget") else "",
+            "fees_per_capita_note": (
+                " ⚠ 接近 5,500 上限" if info["fees"].get("over_old_budget") else " ✓"
+            ),
+            "tickets_total_fmt": _money(info.get("tickets_total", 0)),
             "tickets_rows": tickets_rows,
             "lodging_prices": lodging_prices,
             "border_permit": bp,

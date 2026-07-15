@@ -114,25 +114,11 @@
       "tag": "ok"
     }
   ],
-  "fees_15d": {
-    "name": "15 天精简版",
-    "budget_total": 28402,
-    "per_capita": 4734,
-    "rows": [
-      { "item": "住宿(民宿六人间)", "unit": "350 元/晚", "qty": "14 晚", "subtotal": 4900 },
-      { "item": "餐饮", "unit": "80 元/人/天", "qty": "6 人 × 15 天", "subtotal": 7200 },
-      { "item": "油费", "unit": "0.6 元/km", "qty": "7,100 km", "subtotal": 4260 },
-      { "item": "高速过路费", "unit": "—", "qty": "—", "subtotal": 1800 },
-      { "item": "景区门票+区间车", "unit": "见下方门票表", "qty": "—", "subtotal": 4242 },
-      { "item": "物资/药品/应急", "unit": "—", "qty": "—", "subtotal": 2000 },
-      { "item": "边防证", "unit": "免费", "qty": "—", "subtotal": 0 }
-    ]
-  },
-  "fees_20d": {
+  "fees": {
     "name": "20 天完整版",
     "budget_total": 32758,
     "per_capita": 5460,
-    "over_budget": true,
+    "over_old_budget": true,
     "rows": [
       { "item": "住宿(民宿六人间)", "unit": "350 元/晚", "qty": "19 晚", "subtotal": 6650 },
       { "item": "餐饮", "unit": "80 元/人/天", "qty": "6 人 × 20 天", "subtotal": 9600 },
@@ -147,89 +133,33 @@
     "压缩方向:伊吾胡杨林避旺季多次进出;赛里木湖选 24h 单次票;江布拉克减少停留日数以省区间车。"
   ],
   "tickets": [
+    { "spot": "大海道", "price": "门票 40 + 自驾 95/人", "total": 810, "tag": "warn" },
+    { "spot": "幻彩湖", "price": "免费", "total": 0, "tag": "ok" },
     {
-      "spot": "大海道",
-      "old_price": "45 元/人 + 100 元/车",
-      "new_price": "门票 40 + 自驾 95/人",
-      "old_total": 370,
-      "new_total": 810,
-      "tag": "warn"
-    },
-    {
-      "spot": "幻彩湖",
-      "old_price": "免费",
-      "new_price": "免费",
-      "old_total": 0,
-      "new_total": 0,
-      "tag": "ok"
-    },
-    {
-      "spot": "伊吾胡杨林(仅 20 天)",
-      "old_price": "18 元/人",
-      "new_price": "门票 35 + 观光车 120 = 155 元/人",
-      "old_total": 108,
-      "new_total": 930,
+      "spot": "伊吾胡杨林(20 天)",
+      "price": "门票 35 + 观光车 120 = 155 元/人",
+      "total": 930,
       "tag": "up"
     },
     {
       "spot": "江布拉克",
-      "old_price": "43 元/人",
-      "new_price": "通票 78 元/人(门票 43 + 区间车 35)",
-      "old_total": 258,
-      "new_total": 468,
+      "price": "通票 78 元/人(门票 43 + 区间车 35)",
+      "total": 468,
       "tag": "up"
     },
     {
-      "spot": "可可托海(仅 20 天)",
-      "old_price": "116 元/人含区间",
-      "new_price": "门票 90 + 区间车 36-50/人",
-      "old_total": 696,
-      "new_total": 840,
+      "spot": "可可托海(20 天)",
+      "price": "门票 90 + 区间车 36-50/人",
+      "total": 840,
       "tag": "warn"
     },
-    {
-      "spot": "可可苏里湖(20 天 D9)",
-      "old_price": "未列",
-      "new_price": "28 元/人",
-      "old_total": 0,
-      "new_total": 168,
-      "tag": "up"
-    },
-    {
-      "spot": "白哈巴",
-      "old_price": "30+45=75(7/15 修正原 194)",
-      "new_price": "门票 30 + 区间车 45 = 75 元/人",
-      "old_total": 1164,
-      "new_total": 360,
-      "tag": "down"
-    },
-    {
-      "spot": "喀纳斯三湾",
-      "old_price": "含白哈巴区间车",
-      "new_price": "0",
-      "old_total": 0,
-      "new_total": 0,
-      "tag": "ok"
-    },
-    {
-      "spot": "赛里木湖",
-      "old_price": "290 元/车",
-      "new_price": "145 元/人自驾(24h)",
-      "old_total": 290,
-      "new_total": 870,
-      "tag": "up"
-    },
-    {
-      "spot": "唐布拉/琼库什台/伊昭/独库",
-      "old_price": "免费",
-      "new_price": "免费",
-      "old_total": 0,
-      "new_total": 0,
-      "tag": "ok"
-    }
+    { "spot": "可可苏里湖(20 天 D9)", "price": "28 元/人", "total": 168, "tag": "up" },
+    { "spot": "白哈巴", "price": "门票 30 + 区间车 45 = 75 元/人", "total": 360, "tag": "down" },
+    { "spot": "喀纳斯三湾", "price": "含白哈巴区间车", "total": 0, "tag": "ok" },
+    { "spot": "赛里木湖", "price": "145 元/人自驾(24h)", "total": 870, "tag": "up" },
+    { "spot": "唐布拉/琼库什台/伊昭/独库", "price": "免费", "total": 0, "tag": "ok" }
   ],
-  "tickets_total_old": 3476,
-  "tickets_total_new": 4446,
+  "tickets_total": 4446,
   "lodging_prices": [
     { "range": "中卫/嘉峪关/武威/精河/奎屯/鄯善", "min": 280, "max": 380 },
     { "range": "哈密/巴里坤/特克斯/伊宁", "min": 300, "max": 500 },

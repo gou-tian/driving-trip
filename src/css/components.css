@@ -272,6 +272,158 @@
   margin-right: var(--s-1);
 }
 
+/* ============= 通用数据表(2026/07/15 重构:统一对齐/美化) ============= */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-1);
+  font-size: var(--fs-sm);
+  table-layout: fixed;
+}
+
+/* 列宽契约(给 colgroup 用) */
+.data-table .col-item,
+.data-table .col-spot { width: auto; }
+.data-table .col-unit,
+.data-table .col-qty { width: 22%; }
+.data-table .col-price { width: 38%; }
+.data-table .col-num { width: 16%; }
+.data-table .col-tag { width: 14%; }
+
+.data-table thead {
+  background: var(--brand-500);
+  color: white;
+}
+
+.data-table thead th {
+  padding: var(--s-3) var(--s-3);
+  text-align: left;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  border-bottom: none;
+}
+
+.data-table thead th.num-th {
+  text-align: right;
+}
+
+.data-table tbody tr {
+  transition: background var(--t-fast) var(--ease);
+}
+
+.data-table tbody tr:hover {
+  background: color-mix(in srgb, var(--brand-500) 5%, transparent);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table td {
+  padding: var(--s-3) var(--s-3);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.data-table .num,
+.data-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  white-space: nowrap;
+}
+
+.data-table .muted {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.data-table .hl {
+  color: var(--text);
+  font-weight: var(--fw-semibold);
+}
+
+.data-table tfoot th,
+.data-table tfoot td {
+  background: var(--bg-deep);
+  font-weight: var(--fw-semibold);
+  border-top: 2px solid var(--brand-500);
+  border-bottom: none;
+  padding: var(--s-3) var(--s-3);
+}
+
+.data-table .t-right {
+  text-align: right;
+}
+
+.data-table .icon {
+  text-align: center;
+  font-size: var(--fs-lg);
+  width: 40px;
+}
+
+.data-table .tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+  text-align: center;
+  min-width: 60px;
+}
+
+.data-table .tag-ok   { background: color-mix(in srgb, var(--m-play) 15%, transparent);   color: var(--m-play);   }
+.data-table .tag-warn { background: color-mix(in srgb, var(--m-warn) 12%, transparent);   color: var(--m-warn);   }
+.data-table .tag-up   { background: color-mix(in srgb, var(--m-weather) 15%, transparent); color: var(--m-weather); }
+.data-table .tag-down { background: color-mix(in srgb, var(--m-play) 15%, transparent);   color: var(--m-play);   }
+
+.data-table code.tel {
+  background: var(--bg-deep);
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-weight: var(--fw-semibold);
+  color: var(--brand-500);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 暗色模式适配 */
+:root[data-theme="dark"] .data-table {
+  background: var(--card-bg);
+  border-color: var(--border);
+}
+
+:root[data-theme="dark"] .data-table thead {
+  background: var(--brand-700);
+}
+
+:root[data-theme="dark"] .data-table tbody tr:hover {
+  background: color-mix(in srgb, var(--brand-500) 8%, transparent);
+}
+
+:root[data-theme="dark"] .data-table tfoot th,
+:root[data-theme="dark"] .data-table tfoot td {
+  background: var(--bg-deep);
+}
+
+:root[data-theme="dark"] .data-table .tag-ok   { background: color-mix(in srgb, var(--m-play-dark) 18%, transparent);   color: var(--m-play-dark);   }
+:root[data-theme="dark"] .data-table .tag-warn { background: color-mix(in srgb, var(--m-warn-dark) 18%, transparent);   color: var(--m-warn-dark);   }
+:root[data-theme="dark"] .data-table .tag-up   { background: color-mix(in srgb, var(--m-weather-dark) 18%, transparent); color: var(--m-weather-dark); }
+:root[data-theme="dark"] .data-table .tag-down { background: color-mix(in srgb, var(--m-play-dark) 18%, transparent);   color: var(--m-play-dark);   }
+
+:root[data-theme="dark"] .data-table code.tel {
+  color: var(--brand-on-dark);
+}
+
 /* ============= 速查表 ============= */
 .weather-table {
   background: var(--card-bg);

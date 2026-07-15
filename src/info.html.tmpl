@@ -46,27 +46,23 @@
     </div>
   </section>
 
-  <!-- 2. 费用明细 -->
+  <!-- 2. 费用明细(2026/07/15 精简:只保留 20d) -->
   <section class="module" id="fees">
-    <h2><span class="icon">💰</span> 二、费用明细(6 人合计)</h2>
+    <h2><span class="icon">💰</span> 二、费用明细(6 人合计 · 20 天版)</h2>
     <div class="module-body">
-      <h3 class="sub">{{ info.fees_15d.name }}<span class="total">约 {{ fees_15d_budget_total_fmt }} 元 · 人均 {{ fees_15d_per_capita_fmt }}</span></h3>
+      <h3 class="sub">{{ info.fees.name }}<span class="total{{ fees_warn_class }}">约 {{ fees_budget_total_fmt }} 元 · 人均 {{ fees_per_capita_fmt }} · 目标 5,500</span></h3>
       <table class="data-table data-table-num">
+        <colgroup>
+          <col class="col-item">
+          <col class="col-unit">
+          <col class="col-qty">
+          <col class="col-num">
+        </colgroup>
         <thead><tr><th>项目</th><th>单价</th><th>数量</th><th class="num-th">小计(元)</th></tr></thead>
-        <tbody>{{ fees_15d_rows | safe }}</tbody>
+        <tbody>{{ fees_rows | safe }}</tbody>
         <tfoot>
-          <tr><th colspan="3" class="t-right">合计</th><th class="num">约 {{ fees_15d_budget_total_fmt }} 元</th></tr>
-          <tr><th colspan="3" class="t-right">人均</th><th class="num">约 {{ fees_15d_per_capita_fmt }} 元 ✓</th></tr>
-        </tfoot>
-      </table>
-
-      <h3 class="sub">{{ info.fees_20d.name }}<span class="total warn">约 {{ fees_20d_budget_total_fmt }} 元 · 人均 ≈ {{ fees_20d_per_capita_fmt }} · 微超 5,000 目标</span></h3>
-      <table class="data-table data-table-num">
-        <thead><tr><th>项目</th><th>单价</th><th>数量</th><th class="num-th">小计(元)</th></tr></thead>
-        <tbody>{{ fees_20d_rows | safe }}</tbody>
-        <tfoot>
-          <tr><th colspan="3" class="t-right">合计</th><th class="num">约 {{ fees_20d_budget_total_fmt }} 元</th></tr>
-          <tr><th colspan="3" class="t-right">人均</th><th class="num">约 {{ fees_20d_per_capita_fmt }} 元 ⚠</th></tr>
+          <tr><th colspan="3" class="t-right">合计</th><th class="num">{{ fees_budget_total_fmt }}</th></tr>
+          <tr><th colspan="3" class="t-right">人均</th><th class="num">{{ fees_per_capita_fmt }}{{ fees_per_capita_note }}</th></tr>
         </tfoot>
       </table>
 
@@ -74,17 +70,23 @@
     </div>
   </section>
 
-  <!-- 3. 景区门票 -->
+  <!-- 3. 景区门票(2026/07/15 精简:只保留最新价格) -->
   <section class="module" id="tickets">
-    <h2><span class="icon">🎫</span> 三、景区门票速查(6 人 · 2026/07/15 更新)</h2>
+    <h2><span class="icon">🎫</span> 三、景区门票速查(6 人 · 2026/07/15)</h2>
     <div class="module-body">
       <table class="data-table data-table-num">
+        <colgroup>
+          <col class="col-spot">
+          <col class="col-price">
+          <col class="col-num">
+          <col class="col-tag">
+        </colgroup>
         <thead>
-          <tr><th>景点</th><th>原票价</th><th>新票价</th><th class="num-th">6 人原合计</th><th class="num-th">6 人新合计</th><th>性质</th></tr>
+          <tr><th>景点</th><th>票价</th><th class="num-th">6 人合计(元)</th><th>性质</th></tr>
         </thead>
         <tbody>{{ tickets_rows | safe }}</tbody>
         <tfoot>
-          <tr><th colspan="3" class="t-right">门票总计</th><th class="num muted">{{ tickets_total_old_fmt }} 元</th><th class="num hl">{{ tickets_total_new_fmt }} 元</th><th></th></tr>
+          <tr><th colspan="2" class="t-right">门票总计</th><th class="num hl">{{ tickets_total_fmt }}</th><th></th></tr>
         </tfoot>
       </table>
     </div>
