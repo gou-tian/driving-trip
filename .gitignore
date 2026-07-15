@@ -42,3 +42,22 @@ _old_html/
 /day/
 /amap/
 /css/
+
+# ============================================================
+# 2026/07/15 restructure:以下目录由用户本地管理,不入 git
+# ============================================================
+
+# 旅行方案文档(用户本地维护)
+plan-1/
+plan-2/
+plan-3/
+plan-4/
+
+# 旧版网站 fallback(已被根目录取代,仅留作历史参考)
+xinjiang-trip-website/
+
+# Claude 用户特定配置(per-user,不入 git)
+/.claude/settings.local.json
+
+# Playwright MCP 测试产物(浏览器自动化中间状态)
+/.playwright-mcp/

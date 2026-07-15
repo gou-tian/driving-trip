@@ -1,5 +1,5 @@
 [project]
-name = "xinjiang-trip-website"
+name = "xinjiang-trip"
 version = "2.0.0"
 description = "新疆自驾 20 天静态网站 · 含白哈巴版 · 实时天气 + 高德导航指南"
 requires-python = ">=3.10"

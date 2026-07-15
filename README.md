@@ -38,7 +38,7 @@ python -m scripts.build --help
 ## 📂 项目结构
 
 ```
-xinjiang-trip-website/
+xinjiang/                    # 项目根(★ git 仓库)
 ├── src/                    # 源(编辑这里)
 │   ├── partials/           # 可复用 HTML 片段(7 个)
 │   ├── css/                # 8 个分层 CSS(tokens/reset/base/...)
@@ -149,7 +149,7 @@ run: python3 -m scripts.build --clean
 ### 手动部署(本地脚本)
 
 ```bash
-cd /Users/goutian/ai/claude/travel/xinjiang/xinjiang-trip-website
+cd /Users/goutian/ai/claude/travel/xinjiang
 ./scripts/deploy.sh              # 真部署
 ./scripts/deploy.sh --dry-run    # 仅模拟
 ./scripts/deploy.sh --rollback   # 回滚

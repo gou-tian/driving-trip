@@ -1,0 +1,56 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uvx ruff:*)",
+      "Bash(python3 /Users/goutian/ai/claude/travel/xinjiang/plan-3/_build_pdf_*.py:*)",
+      "Bash(/Applications/Google Chrome.app/Contents/MacOS/Google Chrome:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.py ]]; then uvx ruff check --fix \"$CLAUDE_FILE_PATH\" 2>/dev/null && uvx ruff format \"$CLAUDE_FILE_PATH\" 2>/dev/null; fi"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATH\" == */plan-3/*.md ]]; then echo '⚠️ plan-3 Markdown 已更新,记得重跑对应 _build_pdf_*.py 重新生成 PDF'; fi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '(rm|cp|mv|truncate|>).*(\\xe2\\x9c\\x96|\\xf0\\x9f\\x93\\x85|\\xf0\\x9f\\x8d\\xb4|\\xf0\\x9f\\x97\\xba|\\xf0\\x9f\\x92\\xb0|\\xf0\\x9f\\x9a\\x97).*\\.md'; then echo 'BLOCK: 源方案 .md 文件不允许批量操作,请用 Edit 精准修改'; exit 2; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATH\" == *.pdf ]]; then echo 'BLOCK: PDF 是生成产物,请修改对应 .md 后重跑 _build_pdf_*.py'; exit 2; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ls -lh /tmp/xinjiang*.html 2>/dev/null | awk '{print $9, $5}' | while read f s; do echo \"  $f ($s)\"; done; if ls /tmp/xinjiang*.html 2>/dev/null | head -1 | grep -q .; then echo '⚠️ /tmp 下还有 HTML 中间产物,请 rm /tmp/xinjiang*.html 清理'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

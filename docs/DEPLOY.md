@@ -34,7 +34,7 @@ ls dist/
 ### 方式 B:手动拖拽
 
 1. Netlify → "Sites" → 拖拽整个 `dist/` 到页面
-2. **不要**拖整个 `xinjiang-trip-website/`(包含 src 会暴露源代码)
+2. **不要**拖整个项目根(包含 `src/`、`scripts/` 会暴露源代码);只拖 `dist/` 即可
 
 ---
 
@@ -42,7 +42,7 @@ ls dist/
 
 ```bash
 npm i -g vercel
-cd xinjiang-trip-website
+cd xinjiang
 vercel --prod
 ```
 
