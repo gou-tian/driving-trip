@@ -106,3 +106,40 @@
 @media (max-width: 768px) {
   .hide-md-down { display: none; }
 }
+
+/* ============= 卡片布局 utility(2026/07/15) =============
+ * 吸收 home.html.tmpl #tools 块 14 处内联 style;
+ * .card-highlight 默认继承父级 .card-accent 定义的 --accent-color
+ * (即 .card-accent.play → --accent-color: var(--m-play) 等)
+ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s-4);
+}
+
+.card-link {
+  display: block;
+  text-decoration: none;
+}
+
+.card-title-lg {
+  font-size: var(--fs-xl);
+  color: var(--brand-500);
+  font-weight: var(--fw-bold);
+}
+
+.card-subtitle {
+  margin-top: var(--s-3);
+  font-weight: var(--fw-medium);
+}
+
+.card-highlight {
+  margin-top: var(--s-2);
+  font-weight: var(--fw-semibold);
+  color: var(--accent-color, var(--brand-500));
+}
+
+.card-path {
+  margin-top: var(--s-2);
+}

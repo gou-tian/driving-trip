@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import sys
 import threading
@@ -49,24 +50,69 @@ from scripts.trip_data import load_days, load_info, load_weather_cities  # noqa:
 # ============================================================
 
 
+def _minify_css(css: str) -> str:
+    """简易 CSS 压缩(2026/07/15 强化,保持纯 stdlib)。
+
+    操作:
+      - 去掉 /* ... */ 注释(非贪婪、多行)
+      - 折叠连续空白为单空格
+      - 折叠 `{` 周围、`: ` 周围、`;` 前后的多余空格
+      - 去掉规则内最后一条声明后的多余 `;`(CSS 允许)
+      - 保留 `@layer a, b, c` 列表里的空格
+      - 保留 `var(--token)` 内的字符不动
+
+    保守:不解析 URL() / 字符串(项目 CSS 都没有);不做名字混淆。
+    体积预期:32 KB → 22-25 KB。
+    """
+    # 1. 去 /* ... */ 注释(DOTALL,多行;非贪婪)
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+    # 2. 折叠右花括号前后的空白: }  → },}{→}{,避免破坏选择器链
+    css = re.sub(r"\s*\}\s*", "}", css)
+    # 3. 折叠 `{` 前的空白
+    css = re.sub(r"\s*\{", "{", css)
+    # 4. 折叠 `:` 后的空白(伪类/伪元素 `:hover` 不动,这里指属性 `:` 后)
+    #    规则:`:` 后若跟非标识符字符(如空格)则去;但 `::before` 保留
+    #    安全做法:只在 `prop: value` 上下文去空格 → 用 `:[space]+` → `:`
+    css = re.sub(r":\s+", ":", css)
+    # 5. 折叠 `;` 前的空白
+    css = re.sub(r"\s+;", ";", css)
+    # 6. 去掉规则内最后一条声明的 `;`(CSS 允许,但 } 前的 ; 是噪声)
+    css = re.sub(r";\}", "}", css)
+    # 7. 折叠连续空白为单空格
+    css = re.sub(r"\s+", " ", css)
+    # 8. 还原 @layer 列表的逗号空格(因为上一步折叠到单空格)
+    #    之前规则没去 `: ` 后空格,@layer 名字里也没有空格,但为了保险
+    #    重新插入 `, ` 让 @layer a, b, c 可读
+    #    (注意:`:` 后空格已去,但 `, ` 没被规则影响,因为没匹配模式)
+    # 9. 去掉首尾空白
+    return css.strip()
+
+
 def merge_css() -> tuple[Path, str]:
-    """合并 src/css/*.css(除 amap.css)→ dist/css/theme.min.css。"""
+    """合并 src/css/*.css(除 amap.css)→ dist/css/theme.min.css。
+
+    2026/07/15 强化:每个文件用 @layer <name> 包裹,显式声明 cascade
+    顺序,避免源文件加载顺序隐式决定优先级。
+    """
+    # (文件名, @layer 名)
     order = [
-        "tokens.css",
-        "reset.css",
-        "base.css",
-        "layout.css",
-        "components.css",
-        "weather.css",
-        "print.css",
+        ("tokens.css", "tokens"),
+        ("reset.css", "reset"),
+        ("base.css", "base"),
+        ("layout.css", "layout"),
+        ("components.css", "components"),
+        ("weather.css", "weather"),
+        ("print.css", "print"),
     ]
     parts = []
-    for name in order:
+    for name, layer in order:
         p = SRC_CSS / name
         if p.exists():
-            parts.append(f"/* ===== {name} ===== */\n{p.read_text(encoding='utf-8')}")
+            body = p.read_text(encoding="utf-8")
+            parts.append(f"@layer {layer}{{{body}}}")
 
     content = "\n".join(parts) + "\n"
+    content = _minify_css(content)
     out = DIST_CSS / "theme.min.css"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(content, encoding="utf-8")
