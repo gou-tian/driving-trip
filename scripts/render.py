@@ -562,7 +562,7 @@ def render_info(info: dict, css_ver: str) -> str:
             "fees_per_capita_fmt": _money(info["fees"]["per_capita"]),
             "fees_warn_class": " warn" if info["fees"].get("over_old_budget") else "",
             "fees_per_capita_note": (
-                " ⚠ 接近 5,500 上限" if info["fees"].get("over_old_budget") else " ✓"
+                " ⚠ 微超 5,000 目标" if info["fees"].get("over_old_budget") else " ✓"
             ),
             "tickets_total_fmt": _money(info.get("tickets_total", 0)),
             "tickets_rows": tickets_rows,
